@@ -4,6 +4,7 @@ import { StatCard } from './StatCard';
 import { MonthlyChart } from './MonthlyChart';
 import { CategoryChart } from './CategoryChart';
 import { BalanceTrendChart } from './BalanceTrendChart';
+import { MerchantAnalysis } from './MerchantAnalysis';
 import { TransactionList } from './TransactionList';
 import { FileUpload } from './FileUpload';
 import { DateRangePicker } from './DateRangePicker';
@@ -247,6 +248,11 @@ export function Dashboard() {
               onCategoryChange={updateTransactionCategory}
               categoryFilter={selectedCategory}
               onCategoryFilterChange={setSelectedCategory}
+            />
+
+            <MerchantAnalysis
+              transactions={filteredTransactions}
+              selectedCategory={selectedCategory}
             />
           </>
         )}
