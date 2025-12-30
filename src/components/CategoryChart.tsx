@@ -85,14 +85,24 @@ export const CategoryChart = memo(function CategoryChart({ data, selectedCategor
                 onClick={handlePieClick}
                 style={{ cursor: 'pointer' }}
               >
-                {data.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                    className="stroke-background stroke-2"
-                    opacity={selectedCategory && selectedCategory !== entry.category ? 0.3 : 1}
-                  />
-                ))}
+                {data.map((entry, index) => {
+                  const isSelected = selectedCategory === entry.category;
+                  const isOther = selectedCategory && !isSelected;
+                  return (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                      className="stroke-background stroke-2 transition-all duration-300 ease-out"
+                      opacity={isOther ? 0.3 : 1}
+                      style={{
+                        filter: isSelected ? 'drop-shadow(0 0 8px currentColor)' : 'none',
+                        transform: isSelected ? 'scale(1.05)' : 'scale(1)',
+                        transformOrigin: 'center',
+                        transition: 'opacity 0.3s ease-out, filter 0.3s ease-out, transform 0.3s ease-out',
+                      }}
+                    />
+                  );
+                })}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
               <Legend
