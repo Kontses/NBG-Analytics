@@ -98,37 +98,35 @@ export function MerchantAnalysis({ transactions, selectedCategory }: MerchantAna
 
     if (merchantStats.length === 0) return null;
 
-    return (
-        <Card className="shadow-sm h-[600px] flex flex-col">
-            <CardHeader className="pb-4 shrink-0">
-                <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                            <Store className="w-6 h-6 text-primary" />
-                            <CardTitle className="text-xl font-bold">Επαναλαμβανόμενα Έξοδα</CardTitle>
-                        </div>
-                        <CardDescription>Merchants με 2+ συναλλαγές</CardDescription>
-                    </div>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className="ml-auto">
-                                <ArrowUpDown className="mr-2 h-4 w-4" />
-                                {sortOption === 'amount' ? 'Συνολικό Ποσό' : 'Πλήθος Συναλλαγών'}
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => setSortOption('amount')}>
-                                Συνολικό Ποσό
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setSortOption('count')}>
-                                Πλήθος Συναλλαγών
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </CardHeader>
 
-            <CardContent className="space-y-6 overflow-hidden flex flex-col flex-1">
+    return (
+        <div className="h-[600px] flex flex-col space-y-4">
+            {/* Header Controls (Title removed) */}
+            <div className="flex items-center justify-between shrink-0">
+                <div>
+                    <p className="text-sm text-muted-foreground">
+                        Merchants με 2+ συναλλαγές
+                    </p>
+                </div>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm" className="ml-auto">
+                            <ArrowUpDown className="mr-2 h-4 w-4" />
+                            {sortOption === 'amount' ? 'Συνολικό Ποσό' : 'Πλήθος Συναλλαγών'}
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setSortOption('amount')}>
+                            Συνολικό Ποσό
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setSortOption('count')}>
+                            Πλήθος Συναλλαγών
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+
+            <div className="space-y-6 overflow-hidden flex flex-col flex-1">
                 {/* Summary Metric Block */}
                 <div className="flex items-center justify-between p-4 bg-muted/40 rounded-lg border shrink-0">
                     <div>
@@ -194,7 +192,7 @@ export function MerchantAnalysis({ transactions, selectedCategory }: MerchantAna
                         ))}
                     </div>
                 </ScrollArea>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }
