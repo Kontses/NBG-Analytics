@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
-import { Wallet, TrendingUp, TrendingDown, CreditCard, Trash2, RefreshCw } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, CreditCard, Trash2, RefreshCw, Store } from 'lucide-react';
 import { StatCard } from './StatCard';
 import { MonthlyChart } from './MonthlyChart';
 import { CategoryChart } from './CategoryChart';
@@ -8,6 +8,8 @@ import { MerchantAnalysis } from './MerchantAnalysis';
 import { TransactionList } from './TransactionList';
 import { FileUpload } from './FileUpload';
 import { DateRangePicker } from './DateRangePicker';
+import { CollapsibleCard } from './ui/CollapsibleCard';
+
 import { useTransactions } from '@/hooks/useTransactions';
 import { Button } from '@/components/ui/button';
 
@@ -241,19 +243,37 @@ export function Dashboard() {
               />
             </div>
 
-            <BalanceTrendChart transactions={filteredTransactions} />
+            {/* Balance Trend - Always Visible */}
+            <div className="mb-8">
+              <BalanceTrendChart transactions={filteredTransactions} />
+            </div>
 
-            <TransactionList
-              transactions={filteredTransactions}
-              onCategoryChange={updateTransactionCategory}
-              categoryFilter={selectedCategory}
-              onCategoryFilterChange={setSelectedCategory}
-            />
+            {/* Transactions - Wrapped */}
+            <CollapsibleCard
+              title="Συναλλαγές"
+              icon={<div className="bg-primary/10 p-1 rounded-full"><TrendingUp className="w-4 h-4 text-primary" /></div>} // Using raw icon here as Search is internal
+              defaultOpen={false} // Default closed as per request for performance/progressive load
+              className="mb-8"
+            >
+              <TransactionList
+                transactions={filteredTransactions}
+                onCategoryChange={updateTransactionCategory}
+                categoryFilter={selectedCategory}
+                onCategoryFilterChange={setSelectedCategory}
+              />
+            </CollapsibleCard>
 
-            <MerchantAnalysis
-              transactions={filteredTransactions}
-              selectedCategory={selectedCategory}
-            />
+            {/* Merchant Analysis - Wrapped */}
+            <CollapsibleCard
+              title="Επαναλαμβανόμενα Έξοδα ανά Merchant"
+              icon={<Store className="w-5 h-5 text-primary" />}
+              defaultOpen={false}
+            >
+              <MerchantAnalysis
+                transactions={filteredTransactions}
+                selectedCategory={selectedCategory}
+              />
+            </CollapsibleCard>
           </>
         )}
 
