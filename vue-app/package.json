@@ -1,0 +1,29 @@
+{
+    "name": "nbg-analytics-vue",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "vue": "^3.4.0",
+        "vuetify": "^3.5.0",
+        "@mdi/font": "^7.4.47",
+        "roboto-fontface": "*",
+        "webfontloader": "^1.0.0",
+        "chart.js": "^4.4.1",
+        "vue-chartjs": "^5.3.0",
+        "xlsx": "^0.18.5",
+        "date-fns": "^3.6.0"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^5.0.0",
+        "vite": "^5.0.0",
+        "vite-plugin-vuetify": "^2.0.0",
+        "typescript": "^5.3.0",
+        "vue-tsc": "^2.0.0"
+    }
+}
