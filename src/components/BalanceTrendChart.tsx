@@ -32,7 +32,7 @@ export function BalanceTrendChart({ transactions }: BalanceTrendChartProps) {
   const { balanceData, monthStartIndices } = useMemo(() => {
     if (transactions.length === 0) return { balanceData: [], monthStartIndices: [] };
 
-    // Ταξινόμηση συναλλαγών χρονολογικά (παλαιότερες πρώτα)
+    // Ταξινόμηση συναλλαγών χρονολογικά με τις παλαιότερες πρώτα
     const sorted = [...transactions].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );

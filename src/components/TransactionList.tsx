@@ -39,7 +39,7 @@ export const TransactionList = memo(function TransactionList({
   const [internalCategoryFilter, setInternalCategoryFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
 
-  // Χρήση εξωτερικού φίλτρου αν υπάρχει, αλλιώς εσωτερικού
+  // Χρήση εξωτερικού φίλτρου αν υπάρχει
   const categoryFilter = externalCategoryFilter ?? (internalCategoryFilter === 'all' ? null : internalCategoryFilter);
 
   const handleCategoryFilterChange = (value: string) => {

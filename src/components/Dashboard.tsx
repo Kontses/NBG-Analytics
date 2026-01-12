@@ -273,7 +273,7 @@ export function Dashboard() {
             <CollapsibleCard
               title="Συναλλαγές"
               icon={<div className="bg-primary/10 p-1 rounded-full"><TrendingUp className="w-4 h-4 text-primary" /></div>} // Using raw icon here as Search is internal
-              defaultOpen={false} // Default closed as per request for performance/progressive load
+              defaultOpen={false} // Default κλειστό tab για καλύτερο performance load
               className="mb-8"
             >
               <TransactionList

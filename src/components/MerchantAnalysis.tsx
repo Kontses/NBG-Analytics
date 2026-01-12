@@ -101,7 +101,6 @@ export function MerchantAnalysis({ transactions, selectedCategory }: MerchantAna
 
     return (
         <div className="h-[600px] flex flex-col space-y-4">
-            {/* Χειριστήρια Επικεφαλίδας (Ο τίτλος αφαιρέθηκε) */}
             <div className="flex items-center justify-between shrink-0">
                 <div>
                     <p className="text-sm text-muted-foreground">
@@ -141,7 +140,7 @@ export function MerchantAnalysis({ transactions, selectedCategory }: MerchantAna
 
 
 
-                {/* Λίστα Merchants - Με κύλιση */}
+                {/* Λίστα Merchants */}
                 <ScrollArea className="h-full -mr-4 pr-4">
                     <div className="border rounded-lg divide-y">
                         {merchantStats.map((merchant) => (

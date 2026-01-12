@@ -132,6 +132,23 @@
                         />
                     </v-expansion-panel-text>
                 </v-expansion-panel>
+                
+                <v-expansion-panel>
+                    <v-expansion-panel-title>
+                        <div class="d-flex align-center ga-2">
+                             <div class="pa-1 rounded-circle bg-primary-lighten-5">
+                                <v-icon icon="mdi-store" color="primary" size="small"></v-icon>
+                             </div>
+                             <span class="font-weight-medium">Επαναλαμβανόμενα Έξοδα ανά Merchant</span>
+                        </div>
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                        <MerchantAnalysis
+                            :transactions="filteredTransactions"
+                            :selected-category="selectedCategory"
+                        />
+                    </v-expansion-panel-text>
+                </v-expansion-panel>
             </v-expansion-panels>
 
         </div>
@@ -162,6 +179,7 @@ import MonthlyChart from './MonthlyChart.vue';
 import CategoryChart from './CategoryChart.vue';
 import BalanceTrendChart from './BalanceTrendChart.vue';
 import TransactionList from './TransactionList.vue';
+import MerchantAnalysis from './MerchantAnalysis.vue';
 
 const {
   transactions,
