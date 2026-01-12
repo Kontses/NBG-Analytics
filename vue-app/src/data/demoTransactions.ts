@@ -72,9 +72,8 @@ const generateTransactions = (): Transaction[] => {
 
         // --- ΠΙΣΤΩΣΕΙΣ (Έσοδα & Διακυμάνσεις) ---
 
-        // Κύρια Μισθοδοσία (κυματιστό άλμα)
-        const salaryDay = random(24, 27);
-        if (currentDate.getDate() === salaryDay) {
+        // Κύρια Μισθοδοσία (Σταθερά στη 1 του μήνα)
+        if (currentDate.getDate() === 1) {
             tempTransactions.push(createTransaction(
                 `demo-${idCounter++}`,
                 currentDate,
