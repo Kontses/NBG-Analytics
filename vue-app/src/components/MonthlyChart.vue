@@ -74,7 +74,7 @@ const chartOptions = {
     mode: 'index' as any,
     intersect: false,
   },
-  onClick: (event: any, elements: any) => {
+  onClick: (_: any, elements: any) => {
     if (elements.length > 0) {
       const index = elements[0].index;
       const month = props.data[index].month;

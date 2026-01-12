@@ -91,7 +91,7 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-// Υπολογισμός δεδομένων ειδικά για το υπόμνημα ώστε να περιλαμβάνουν ποσοστά
+// Υπολογισμός δεδομένων για το υπόμνημα ώστε να περιλαμβάνουν ποσοστά
 const tableData = computed(() => {
     return props.data.map(d => ({
         ...d,
@@ -116,7 +116,7 @@ const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
   cutout: '60%', 
-  onClick: (event: any, elements: any) => {
+  onClick: (_: any, elements: any) => {
     if (elements.length > 0) {
       const index = elements[0].index;
       const category = props.data[index].category;
