@@ -203,6 +203,56 @@ export function Dashboard() {
 
       <main className="container py-8 space-y-8">
         <div className="space-y-4">
+          {!hasData && (
+            <div className="bg-primary/5 rounded-lg border border-primary/20 p-6 mb-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="bg-primary/10 p-2 rounded-full">
+                  <Wallet className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="text-lg font-bold text-foreground">Πώς να ξεκινήσετε:</h3>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-background shadow-sm border border-border">
+                    <span className="text-primary font-bold">1</span>
+                  </div>
+                  <p className="text-foreground pt-1">Σύνδεση στο Digital Banking της <span className="font-bold text-primary">Εθνικής Τράπεζας Ελλάδος</span></p>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-background shadow-sm border border-border">
+                    <span className="text-primary font-bold">2</span>
+                  </div>
+                  <p className="text-foreground pt-1">Μεταβείτε στους <span className="font-bold">Λογαριασμούς</span> και επιλέξτε τον λογαριασμό που θέλετε</p>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-background shadow-sm border border-border">
+                    <span className="text-primary font-bold">3</span>
+                  </div>
+                  <p className="text-foreground pt-1">Πατήστε <span className="font-bold">"Λήψη Excel"</span> από το ιστορικό κινήσεων</p>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-background shadow-sm border border-border">
+                    <span className="text-primary font-bold">4</span>
+                  </div>
+                  <p className="text-foreground pt-1">Σύρετε το αρχείο (Drag & Drop) στο πλαίσιο παρακάτω</p>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-dashed border-primary/20">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  <span>
+                    Δεν έχετε πρόχειρο αρχείο; Μπορείτε να δοκιμάσετε την εφαρμογή αμέσως πατώντας{' '}
+                    <span className="font-bold text-primary">"Δοκιμή με Demo Δεδομένα"</span> παρακάτω.
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
           <FileUpload onUpload={handleUpload} />
           {!hasData && (
             <div className="flex justify-center">

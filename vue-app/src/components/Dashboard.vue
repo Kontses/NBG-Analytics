@@ -30,6 +30,72 @@
     <v-main style="background-color: hsl(209, 40%, 96%); min-height: 100vh;">
       <v-container class="py-8">
         <div class="d-flex flex-column ga-4 mb-8">
+          <div v-if="!hasData" class="mb-6">
+            <v-card class="bg-primary-lighten-5 mb-6" border flat>
+              <v-card-text>
+                <div class="d-flex align-center ga-2 mb-4">
+                  <v-icon color="primary" icon="mdi-information"></v-icon>
+                  <h3 class="text-h6 font-weight-bold">Πώς να ξεκινήσετε:</h3>
+                </div>
+                
+                <v-list bg-color="transparent" class="pa-0">
+                    <v-list-item class="px-0 mb-2">
+                        <template v-slot:prepend>
+                          <div class="bg-white rounded-circle d-flex align-center justify-center mr-4 elevation-1" style="width: 32px; height: 32px;">
+                            <span class="text-primary font-weight-bold">1</span>
+                          </div>
+                        </template>
+                        <v-list-item-title class="text-body-1 text-wrap">
+                          Σύνδεση στο Digital Banking της <span class="font-weight-bold text-primary">Εθνικής Τράπεζας Ελλάδος</span>
+                        </v-list-item-title>
+                    </v-list-item>
+
+                    <v-list-item class="px-0 mb-2">
+                        <template v-slot:prepend>
+                          <div class="bg-white rounded-circle d-flex align-center justify-center mr-4 elevation-1" style="width: 32px; height: 32px;">
+                            <span class="text-primary font-weight-bold">2</span>
+                          </div>
+                        </template>
+                        <v-list-item-title class="text-body-1 text-wrap">
+                          Μεταβείτε στους <span class="font-weight-bold">Λογαριασμούς</span> και επιλέξτε τον λογαριασμό που θέλετε
+                        </v-list-item-title>
+                    </v-list-item>
+                    
+                    <v-list-item class="px-0 mb-2">
+                        <template v-slot:prepend>
+                          <div class="bg-white rounded-circle d-flex align-center justify-center mr-4 elevation-1" style="width: 32px; height: 32px;">
+                            <span class="text-primary font-weight-bold">3</span>
+                          </div>
+                        </template>
+                        <v-list-item-title class="text-body-1 text-wrap">
+                          Πατήστε <span class="font-weight-bold">"Λήψη Excel"</span> από το ιστορικό κινήσεων
+                        </v-list-item-title>
+                    </v-list-item>
+
+                    <v-list-item class="px-0">
+                        <template v-slot:prepend>
+                          <div class="bg-white rounded-circle d-flex align-center justify-center mr-4 elevation-1" style="width: 32px; height: 32px;">
+                            <span class="text-primary font-weight-bold">4</span>
+                          </div>
+                        </template>
+                        <v-list-item-title class="text-body-1 text-wrap">
+                          Σύρετε το αρχείο (Drag & Drop) στο πλαίσιο παρακάτω
+                        </v-list-item-title>
+                    </v-list-item>
+                </v-list>
+
+                <div class="mt-4 pt-4 border-t border-dashed border-primary-lighten-2">
+                    <div class="d-flex align-center ga-2 text-body-2 text-medium-emphasis">
+                        <v-icon icon="mdi-sparkles" color="primary" size="small"></v-icon>
+                        <span>
+                          Δεν έχετε πρόχειρο αρχείο; Μπορείτε να δοκιμάσετε την εφαρμογή αμέσως πατώντας 
+                          <span class="font-weight-bold text-primary">"Δοκιμή με Demo Δεδομένα"</span> παρακάτω.
+                        </span>
+                    </div>
+                </div>
+              </v-card-text>
+            </v-card>
+          </div>
           <FileUpload :on-upload="handleUpload" />
           
           <div v-if="!hasData" class="d-flex justify-center mt-4">
