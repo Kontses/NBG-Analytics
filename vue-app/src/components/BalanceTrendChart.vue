@@ -106,7 +106,12 @@ const chartOptions = {
       border: { display: false },
       grid: { color: '#f3f4f6' },
       ticks: {
-        callback: (value: any) => `€${(value / 1000).toFixed(0)}k`,
+        callback: (value: any) => {
+          if (value >= 1000) {
+            return `€${(value / 1000).toFixed(1).replace(/\.0$/, '')}k`;
+          }
+          return `€${value}`;
+        },
         font: { size: 11, family: 'Inter' },
         color: '#6b7280'
       },

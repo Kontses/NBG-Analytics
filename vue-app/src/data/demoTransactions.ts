@@ -1,7 +1,7 @@
 import { Transaction } from "@/types/transaction";
 
 const generateTransactions = (): Transaction[] => {
-    const transactions: Transaction[] = [];
+    // const transactions: Transaction[] = [];
     const categories = [
         { name: 'Σούπερ Μάρκετ', type: 'debit', merchants: ['ΣΚΛΑΒΕΝΙΤΗΣ', 'ΑΒ ΒΑΣΙΛΟΠΟΥΛΟΣ', 'MY MARKET', 'LIDL', 'BAZAAR'] },
         { name: 'Φαγητό & Ποτό', type: 'debit', merchants: ['EFOOD', 'WOLT', 'BOX', 'COFFEE ISLAND', 'GREGORYS', 'EVEREST', 'MCDONALDS', 'PIZZA FAN'] },
