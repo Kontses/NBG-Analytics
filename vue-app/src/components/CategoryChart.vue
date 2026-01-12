@@ -21,7 +21,7 @@
             <Doughnut :data="chartData" :options="chartOptions" />
         </div>
 
-        <!-- Προσαρμοσμένο Υπόμνημα -->
+        <!-- Υπόμνημα -->
         <div class="d-flex flex-column gap-2" style="min-width: 180px;">
             <div 
                 v-for="(item, index) in tableData" 
@@ -69,7 +69,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['category-click']);
 
-// Χρώματα που ταιριάζουν ακριβώς από το src/index.css (Μπλε Παλέτα)
+// Χρώματα που ταιριάζουν ακριβώς από το src/index.css (Δλδ Μπλε Παλέτα)
 const CHART_COLORS = [
   'hsl(198, 93%, 59%)', // chart-1
   'hsl(213, 93%, 67%)', // chart-2
@@ -91,7 +91,7 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-// Υπολογισμός δεδομένων ειδικά για πίνακα/υπόμνημα ώστε να περιλαμβάνουν ποσοστά
+// Υπολογισμός δεδομένων ειδικά για το υπόμνημα ώστε να περιλαμβάνουν ποσοστά
 const tableData = computed(() => {
     return props.data.map(d => ({
         ...d,
