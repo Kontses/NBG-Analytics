@@ -1,4 +1,4 @@
-import { useMemo, forwardRef } from 'react';
+import { useMemo, forwardRef, memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { TrendingUp } from 'lucide-react';
@@ -28,7 +28,7 @@ const CustomTooltip = forwardRef<HTMLDivElement, any>(({ active, payload, label 
   return null;
 });
 
-export function BalanceTrendChart({ transactions }: BalanceTrendChartProps) {
+export const BalanceTrendChart = memo(function BalanceTrendChart({ transactions }: BalanceTrendChartProps) {
   const { balanceData, monthStartIndices } = useMemo(() => {
     if (transactions.length === 0) return { balanceData: [], monthStartIndices: [] };
 
@@ -145,4 +145,4 @@ export function BalanceTrendChart({ transactions }: BalanceTrendChartProps) {
       </CardContent>
     </Card>
   );
-}
+});

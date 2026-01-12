@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { Wallet, TrendingUp, TrendingDown, CreditCard, Trash2, RefreshCw, Store, Sparkles } from 'lucide-react';
 import { StatCard } from './StatCard';
 import { MonthlyChart } from './MonthlyChart';
@@ -8,7 +8,12 @@ import { MerchantAnalysis } from './MerchantAnalysis';
 import { TransactionList } from './TransactionList';
 import { FileUpload } from './FileUpload';
 import { DateRangePicker } from './DateRangePicker';
-import { CollapsibleCard } from './ui/CollapsibleCard';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 import { useTransactions } from '@/hooks/useTransactions';
 import { Button } from '@/components/ui/button';
@@ -55,20 +60,20 @@ export function Dashboard() {
 
   const datePickerRef = useRef<HTMLDivElement>(null);
 
-  const handleUpload = (data: any[]) => {
+  const handleUpload = useCallback((data: any[]) => {
     const count = addTransactions(data);
     setTimeout(() => {
       datePickerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
     return count;
-  };
+  }, [addTransactions]);
 
-  const handleLoadDemoData = () => {
+  const handleLoadDemoData = useCallback(() => {
     addTransactions(DEMO_TRANSACTIONS);
     setTimeout(() => {
       datePickerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
-  };
+  }, [addTransactions]);
 
   const filteredTransactions = useMemo(() => {
     if (!debouncedStartDate && !debouncedEndDate) return transactions;
@@ -101,7 +106,7 @@ export function Dashboard() {
 
     filteredTransactions.forEach(txn => {
       const date = new Date(txn.date);
-      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const monthKey = `${date.getFullYear()} -${String(date.getMonth() + 1).padStart(2, '0')} `;
 
       if (!monthlyMap.has(monthKey)) {
         monthlyMap.set(monthKey, { income: 0, expenses: 0 });
@@ -137,18 +142,18 @@ export function Dashboard() {
       .sort((a, b) => b.amount - a.amount);
   }, [filteredTransactions]);
 
-  const handleMonthClick = (month: string) => {
+  const handleMonthClick = useCallback((month: string) => {
     const [year, monthNum] = month.split('-').map(Number);
     const firstDay = new Date(year, monthNum - 1, 1);
     const lastDay = new Date(year, monthNum, 0);
     setStartDate(firstDay);
     setEndDate(lastDay);
-  };
+  }, []);
 
-  const clearDateFilter = () => {
+  const clearDateFilter = useCallback(() => {
     setStartDate(undefined);
     setEndDate(undefined);
-  };
+  }, []);
 
   const hasData = transactions.length > 0;
 
@@ -339,32 +344,48 @@ export function Dashboard() {
               <BalanceTrendChart transactions={filteredTransactions} />
             </div>
 
-            {/* Συναλλαγές - Σε σύμπτυξη */}
-            <CollapsibleCard
-              title="Συναλλαγές"
-              icon={<div className="bg-primary/10 p-1 rounded-full"><TrendingUp className="w-4 h-4 text-primary" /></div>} // Using raw icon here as Search is internal
-              defaultOpen={false} // Default κλειστό tab για καλύτερο performance load
-              className="mb-8"
-            >
-              <TransactionList
-                transactions={filteredTransactions}
-                onCategoryChange={updateTransactionCategory}
-                categoryFilter={selectedCategory}
-                onCategoryFilterChange={setSelectedCategory}
-              />
-            </CollapsibleCard>
+            {/* Accordion για Συναλλαγές και Ανάλυση Εμπόρων - Εναλλάξ (Accordion behavior) */}
+            <Accordion type="single" collapsible className="space-y-6">
+              <AccordionItem value="transactions" className="bg-card rounded-xl border border-border px-6 shadow-sm">
+                <AccordionTrigger className="hover:no-underline py-6">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary/10 p-2 rounded-full">
+                      <TrendingUp className="w-5 h-5 text-primary" />
+                    </div>
+                    <span className="text-xl font-bold text-foreground">Συναλλαγές</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="pt-2 pb-6">
+                    <TransactionList
+                      transactions={filteredTransactions}
+                      onCategoryChange={updateTransactionCategory}
+                      categoryFilter={selectedCategory}
+                      onCategoryFilterChange={setSelectedCategory}
+                    />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
 
-            {/* Ανάλυση Εμπόρων - Σε σύμπτυξη */}
-            <CollapsibleCard
-              title="Επαναλαμβανόμενα Έξοδα ανά Merchant"
-              icon={<Store className="w-5 h-5 text-primary" />}
-              defaultOpen={false}
-            >
-              <MerchantAnalysis
-                transactions={filteredTransactions}
-                selectedCategory={selectedCategory}
-              />
-            </CollapsibleCard>
+              <AccordionItem value="merchant-analysis" className="bg-card rounded-xl border border-border px-6 shadow-sm">
+                <AccordionTrigger className="hover:no-underline py-6">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary/10 p-2 rounded-full">
+                      <Store className="w-5 h-5 text-primary" />
+                    </div>
+                    <span className="text-xl font-bold text-foreground">Επαναλαμβανόμενα Έξοδα ανά Merchant</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="pt-2 pb-6">
+                    <MerchantAnalysis
+                      transactions={filteredTransactions}
+                      selectedCategory={selectedCategory}
+                    />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </>
         )}
       </main>

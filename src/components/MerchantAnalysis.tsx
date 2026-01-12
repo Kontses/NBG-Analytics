@@ -141,8 +141,8 @@ export function MerchantAnalysis({ transactions, selectedCategory }: MerchantAna
 
 
                 {/* Λίστα Merchants */}
-                <ScrollArea className="h-full -mr-4 pr-4">
-                    <div className="border rounded-lg divide-y">
+                <div className="border rounded-lg overflow-hidden flex-1 min-h-0">
+                    <div className="h-full overflow-y-auto divide-y">
                         {merchantStats.map((merchant) => (
                             <div key={merchant.name} className="p-4 transition-colors hover:bg-slate-50/50">
                                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-3">
@@ -190,7 +190,7 @@ export function MerchantAnalysis({ transactions, selectedCategory }: MerchantAna
                             </div>
                         ))}
                     </div>
-                </ScrollArea>
+                </div>
             </div>
         </div>
     );
