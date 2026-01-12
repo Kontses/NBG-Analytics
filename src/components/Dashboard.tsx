@@ -170,8 +170,8 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card sticky top-0 z-10">
-        <div className="container py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 w-full border-b bg-background shadow-sm">
+        <div className="container flex py-4 items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-primary text-primary-foreground">
               <Wallet className="w-6 h-6" />
