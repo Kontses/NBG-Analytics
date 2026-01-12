@@ -73,7 +73,12 @@ export const MonthlyChart = memo(function MonthlyChart({ data, onMonthClick }: M
                 className="text-xs fill-muted-foreground"
               />
               <YAxis
-                tickFormatter={(v) => `€${(v / 1000).toFixed(0)}k`}
+                tickFormatter={(v) => {
+                  if (v >= 1000) {
+                    return `€${(v / 1000).toFixed(1).replace(/\.0$/, '')}k`;
+                  }
+                  return `€${v}`;
+                }}
                 className="text-xs fill-muted-foreground"
               />
               <Tooltip content={<CustomTooltip />} />
