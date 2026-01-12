@@ -35,3 +35,19 @@
 - **[Recharts](https://recharts.org/)**: Βιβλιοθήκη γραφημάτων για React.
 - **[SheetJS (xlsx)](https://sheetjs.com/)**: Ανάγνωση και επεξεργασία αρχείων Excel.
 - **[Date-fns](https://date-fns.org/)**: Βιβλιοθήκη για διαχείριση ημερομηνιών.
+
+### Vue Version (`/vue-app`)
+
+Η εφαρμογή διαθέτει και αντίστοιχη υλοποίηση σε **Vue.js** (μέσα στον φάκελο `vue-app`), η οποία προσφέρει τα ίδια χαρακτηριστικά με διαφορετικό τεχνολογικό stack:
+
+- **[Vue.js 3](https://vuejs.org/)**: Προοδευτικό JavaScript Framework.
+- **[Vuetify](https://vuetifyjs.com/)**: Component Framework βασισμένο στο Material Design.
+- **[Pinia / Composables]**: Διαχείριση κατάστασης (State Management).
+- **[Chart.js](https://www.chartjs.org/)** & **[vue-chartjs](https://vue-chartjs.org/)**: Για την οπτικοποίηση δεδομένων.
+
+## Deployment (Live Demo)
+
+Μπορείτε να δείτε τις εφαρμογές live στους παρακάτω συνδέσμους:
+
+- ⚛️ **React Version**: [https://nbg-analytics.vercel.app/](https://nbg-analytics.vercel.app/)
+- 🟢 **Vue Version**: [https://nbg-analytics-vue.vercel.app/](https://nbg-analytics-vue.vercel.app/)
