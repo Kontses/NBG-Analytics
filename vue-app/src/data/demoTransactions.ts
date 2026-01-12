@@ -80,7 +80,7 @@ const generateTransactions = (): Transaction[] => {
                 currentDate,
                 '09:15',
                 'ΜΙΣΘΟΔΟΣΙΑ',
-                1850.00 + random(-50, 50),
+                1200.00,
                 'credit',
                 'Μισθοδοσία',
                 'ΕΤΑΙΡΕΙΑ Α.Ε.'

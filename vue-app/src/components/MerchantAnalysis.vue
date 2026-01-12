@@ -43,7 +43,7 @@
                 </div>
             </div>
 
-            <!-- Λίστα Merchants - Με κύλιση -->
+            <!-- Λίστα Merchants -->
             <div class="border rounded-lg bg-surface" style="height: 400px; overflow-y: auto;">
                 <div v-if="merchantStats.length === 0"
                     class="d-flex justify-center align-center h-100 text-medium-emphasis text-body-2">
