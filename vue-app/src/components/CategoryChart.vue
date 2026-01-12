@@ -1,5 +1,5 @@
 <template>
-  <v-card class="h-100" elevation="0" border>
+  <v-card class="h-100 d-flex flex-column" elevation="0" border>
     <v-card-title class="d-flex justify-space-between align-center pa-6 pb-2">
       <span class="text-h6 font-weight-bold">Κατηγορίες Εξόδων</span>
       <v-btn
@@ -13,10 +13,38 @@
         Καθαρισμός
       </v-btn>
     </v-card-title>
-    <v-card-text class="pa-6 pt-2">
-      <div style="height: 300px; position: relative;">
-        <!-- Χρήση Doughnut αντί για Pie -->
-        <Doughnut :data="chartData" :options="chartOptions" />
+    
+    <v-card-text class="d-flex flex-column flex-grow-1 pa-6 pt-4">
+      <div class="d-flex flex-column flex-md-row align-center justify-center flex-grow-1" style="min-height: 250px; gap: 24px;">
+        <!-- Πλαίσιο Γραφήματος -->
+        <div style="height: 180px; width: 180px; position: relative;">
+            <Doughnut :data="chartData" :options="chartOptions" />
+        </div>
+
+        <!-- Προσαρμοσμένο Υπόμνημα -->
+        <div class="d-flex flex-column gap-2" style="min-width: 180px;">
+            <div 
+                v-for="(item, index) in tableData" 
+                :key="item.category"
+                class="d-flex align-center cursor-pointer pa-1 rounded hover:bg-grey-lighten-4 transition-colors"
+                @click="handleCategoryClick(item.category)"
+                :style="{ opacity: selectedCategory && selectedCategory !== item.category ? 0.3 : 1 }"
+            >
+                <div 
+                    class="rounded-sm mr-2" 
+                    :style="{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length], width: '8px', height: '8px' }"
+                ></div>
+                <div class="text-caption font-weight-medium text-high-emphasis" style="font-size: 0.7rem !important;">
+                    {{ item.category }} <span class="text-medium-emphasis">({{ item.percentage }}%)</span>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- Υποσέλιδο Συνολικών Εξόδων -->
+      <div class="text-center mt-4">
+        <p class="text-caption text-medium-emphasis mb-1">Σύνολο Εξόδων</p>
+        <p class="text-h6 font-weight-bold text-high-emphasis">{{ formatCurrency(total) }}</p>
       </div>
     </v-card-text>
   </v-card>
@@ -41,16 +69,16 @@ const props = defineProps<{
 
 const emit = defineEmits(['category-click']);
 
-// Hardcoded χρώματα αποχρώσεις του μπλε
+// Χρώματα που ταιριάζουν ακριβώς από το src/index.css (Μπλε Παλέτα)
 const CHART_COLORS = [
-  '#3b82f6', // blue-500
-  '#60a5fa', // blue-400
-  '#93c5fd', // blue-300
-  '#2563eb', // blue-600
-  '#1d4ed8', // blue-700
-  '#1e40af', // blue-800
-  '#bfdbfe', // blue-200
-  '#dbeafe', // blue-100
+  'hsl(198, 93%, 59%)', // chart-1
+  'hsl(213, 93%, 67%)', // chart-2
+  'hsl(215, 20%, 65%)', // chart-3
+  'hsl(215, 16%, 46%)', // chart-4
+  'hsl(215, 19%, 34%)', // chart-5
+  'hsl(198, 93%, 45%)', // Extra Blue 1
+  'hsl(213, 93%, 55%)', // Extra Blue 2
+  'hsl(215, 20%, 50%)', // Extra Blue 3
 ];
 
 const total = computed(() => props.data.reduce((sum, item) => sum + item.amount, 0));
@@ -62,6 +90,14 @@ const formatCurrency = (value: number) => {
     minimumFractionDigits: 2,
   }).format(value);
 };
+
+// Υπολογισμός δεδομένων ειδικά για πίνακα/υπόμνημα ώστε να περιλαμβάνουν ποσοστά
+const tableData = computed(() => {
+    return props.data.map(d => ({
+        ...d,
+        percentage: total.value > 0 ? ((d.amount / total.value) * 100).toFixed(0) : 0
+    }));
+});
 
 const chartData = computed(() => ({
   labels: props.data.map(d => d.category),
@@ -79,23 +115,17 @@ const chartData = computed(() => ({
 const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
-  cutout: '60%', // Το κάνει Doughnut
+  cutout: '60%', 
   onClick: (event: any, elements: any) => {
     if (elements.length > 0) {
       const index = elements[0].index;
       const category = props.data[index].category;
-      const newValue = props.selectedCategory === category ? null : category;
-      emit('category-click', newValue);
+      handleCategoryClick(category);
     }
   },
   plugins: {
     legend: {
-      position: 'right' as const,
-      labels: {
-        usePointStyle: true,
-        font: { size: 12, family: 'Inter' },
-        padding: 20
-      }
+      display: false // Απενεργοποίηση ενσωματωμένου υπομνήματος
     },
     tooltip: {
       backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -115,10 +145,25 @@ const chartOptions = computed(() => ({
     }
   }
 }));
+
+const handleCategoryClick = (category: string) => {
+    const newValue = props.selectedCategory === category ? null : category;
+    emit('category-click', newValue);
+};
 </script>
 
 <style scoped>
 .v-card {
   border-radius: 0.5rem !important;
+}
+.gap-2 {
+    gap: 8px;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+/* Μεταβάσεις για αδιαφάνεια/hover */
+.transition-colors {
+    transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 </style>

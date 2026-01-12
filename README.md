@@ -47,7 +47,7 @@
 
 ## Deployment (Live Demo)
 
-Μπορείτε να δείτε τις εφαρμογές live στους παρακάτω συνδέσμους:
+Μπορείτε να δείτε τις εφαρμογές live στους παρακάτω συνδέσμους και να τις συγκρίνετε:
 
 - ⚛️ **React Version**: [https://nbg-analytics.vercel.app/](https://nbg-analytics.vercel.app/)
 - 🟢 **Vue Version**: [https://nbg-analytics-vue.vercel.app/](https://nbg-analytics-vue.vercel.app/)
