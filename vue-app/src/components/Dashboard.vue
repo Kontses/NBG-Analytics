@@ -28,86 +28,97 @@
 
     <!-- Κύριο Περιεχόμενο -->
     <v-main style="background-color: hsl(209, 40%, 96%); min-height: 100vh;">
-      <v-container class="py-8">
+      <v-container class="pt-0 pb-4 px-4">
+        <!-- Κατάσταση Κενού Περιεχομένου (Empty State) Στην Κορυφή -->
+        <div v-if="!hasData" class="text-center pt-8 pb-4">
+            <h2 class="text-h5 font-weight-black mb-2">
+                Καλωσήρθατε στο <span class="text-primary">NBG Analytics</span>
+            </h2>
+            <p class="text-body-1 text-medium-emphasis mx-auto" style="max-width: 600px; line-height: 1.5;">
+                Ο πιο απλός τρόπος για να αποκτήσετε πλήρη εικόνα των οικονομικών σας. 
+                Ανεβάστε το αρχείο Excel της Εθνικής Τράπεζας και δείτε τις δαπάνες σας να ζωντανεύουν.
+            </p>
+        </div>
+
         <div class="d-flex flex-column ga-4 mb-8">
-          <div v-if="!hasData" class="mb-6">
-            <v-card class="bg-primary-lighten-5 mb-6" border flat>
-              <v-card-text>
-                <div class="d-flex align-center ga-2 mb-4">
-                  <v-icon color="primary" icon="mdi-information"></v-icon>
-                  <h3 class="text-h6 font-weight-bold">Πώς να ξεκινήσετε:</h3>
+          <div v-if="!hasData" class="mb-8">
+            <v-card class="rounded-xl overflow-hidden" elevation="2" border>
+              <div class="bg-primary-lighten-5 px-6 py-4 border-b d-flex align-center">
+                <div class="bg-primary-lighten-4 pa-2 rounded-lg mr-3">
+                  <v-icon color="primary" icon="mdi-auto-fix"></v-icon>
                 </div>
-                
-                <v-list bg-color="transparent" class="pa-0">
-                    <v-list-item class="px-0 mb-2">
-                        <template v-slot:prepend>
-                          <div class="bg-white rounded-circle d-flex align-center justify-center mr-4 elevation-1" style="width: 32px; height: 32px;">
-                            <span class="text-primary font-weight-bold">1</span>
-                          </div>
-                        </template>
-                        <v-list-item-title class="text-body-1 text-wrap">
-                          Σύνδεση στο Digital Banking της <span class="font-weight-bold text-primary">Εθνικής Τράπεζας Ελλάδος</span>
-                        </v-list-item-title>
-                    </v-list-item>
-
-                    <v-list-item class="px-0 mb-2">
-                        <template v-slot:prepend>
-                          <div class="bg-white rounded-circle d-flex align-center justify-center mr-4 elevation-1" style="width: 32px; height: 32px;">
-                            <span class="text-primary font-weight-bold">2</span>
-                          </div>
-                        </template>
-                        <v-list-item-title class="text-body-1 text-wrap">
-                          Μεταβείτε στους <span class="font-weight-bold">Λογαριασμούς</span> και επιλέξτε τον λογαριασμό που θέλετε
-                        </v-list-item-title>
-                    </v-list-item>
-                    
-                    <v-list-item class="px-0 mb-2">
-                        <template v-slot:prepend>
-                          <div class="bg-white rounded-circle d-flex align-center justify-center mr-4 elevation-1" style="width: 32px; height: 32px;">
-                            <span class="text-primary font-weight-bold">3</span>
-                          </div>
-                        </template>
-                        <v-list-item-title class="text-body-1 text-wrap">
-                          Πατήστε <span class="font-weight-bold">"Λήψη Excel"</span> από το ιστορικό κινήσεων
-                        </v-list-item-title>
-                    </v-list-item>
-
-                    <v-list-item class="px-0">
-                        <template v-slot:prepend>
-                          <div class="bg-white rounded-circle d-flex align-center justify-center mr-4 elevation-1" style="width: 32px; height: 32px;">
-                            <span class="text-primary font-weight-bold">4</span>
-                          </div>
-                        </template>
-                        <v-list-item-title class="text-body-1 text-wrap">
-                          Σύρετε το αρχείο (Drag & Drop) στο πλαίσιο παρακάτω
-                        </v-list-item-title>
-                    </v-list-item>
-                </v-list>
-
-                <div class="mt-4 pt-4 border-t border-dashed border-primary-lighten-2">
-                    <div class="d-flex align-center ga-2 text-body-2 text-medium-emphasis">
-                        <v-icon icon="mdi-sparkles" color="primary" size="small"></v-icon>
-                        <span>
-                          Δεν έχετε πρόχειρο αρχείο; Μπορείτε να δοκιμάσετε την εφαρμογή αμέσως πατώντας 
-                          <span class="font-weight-bold text-primary">"Δοκιμή με Demo Δεδομένα"</span> παρακάτω.
-                        </span>
+                <h3 class="text-h6 font-weight-bold mb-0">Ξεκινήστε τώρα σε 3 απλά βήματα</h3>
+              </div>
+              
+              <v-card-text class="pa-6">
+                <v-row>
+                  <!-- Βήμα 1 -->
+                  <v-col cols="12" md="4">
+                    <div class="d-flex flex-column ga-3">
+                      <div class="d-flex align-center ga-3">
+                        <div class="pa-3 rounded-circle bg-primary-lighten-5 text-primary">
+                          <v-icon icon="mdi-login-variant"></v-icon>
+                        </div>
+                        <span class="text-caption font-weight-bold text-uppercase text-medium-emphasis tracking-wider">Βήμα 1</span>
+                      </div>
+                      <div>
+                        <h4 class="text-subtitle-1 font-weight-bold mb-1">Σύνδεση</h4>
+                        <p class="text-body-2 text-medium-emphasis">
+                          Στο <a href="https://ebanking.nbg.gr/web/" target="_blank" class="text-primary font-weight-bold text-decoration-none">Digital Banking</a> της Εθνικής Τράπεζας.
+                        </p>
+                      </div>
                     </div>
-                </div>
+                  </v-col>
+
+                  <!-- Βήμα 2 -->
+                  <v-col cols="12" md="4">
+                    <div class="d-flex flex-column ga-3">
+                      <div class="d-flex align-center ga-3">
+                        <div class="pa-3 rounded-circle bg-primary-lighten-5 text-primary">
+                          <v-icon icon="mdi-file-download-outline"></v-icon>
+                        </div>
+                        <span class="text-caption font-weight-bold text-uppercase text-medium-emphasis tracking-wider">Βήμα 2</span>
+                      </div>
+                      <div>
+                        <h4 class="text-subtitle-1 font-weight-bold mb-1">Λήψη Excel</h4>
+                        <p class="text-body-2 text-medium-emphasis font-italic">Λογαριασμοί > Λήψη Excel</p>
+                      </div>
+                    </div>
+                  </v-col>
+
+                  <!-- Βήμα 3 -->
+                  <v-col cols="12" md="4">
+                    <div class="d-flex flex-column ga-3">
+                      <div class="d-flex align-center ga-3">
+                        <div class="pa-3 rounded-circle bg-primary-lighten-5 text-primary">
+                          <v-icon icon="mdi-cloud-upload-outline"></v-icon>
+                        </div>
+                        <span class="text-caption font-weight-bold text-uppercase text-medium-emphasis tracking-wider">Βήμα 3</span>
+                      </div>
+                      <div>
+                        <h4 class="text-subtitle-1 font-weight-bold mb-1">Ανέβασμα</h4>
+                        <p class="text-body-2 text-medium-emphasis">Σύρετε το αρχείο στο πλαίσιο παρακάτω.</p>
+                      </div>
+                    </div>
+                  </v-col>
+                </v-row>
               </v-card-text>
             </v-card>
           </div>
           <FileUpload :on-upload="handleUpload" />
           
-          <div v-if="!hasData" class="d-flex justify-center mt-4">
-            <v-btn
-              color="primary"
-              size="x-large"
-              prepend-icon="mdi-sparkles"
-              elevation="4"
-              @click="handleLoadDemoData"
-            >
-              Δοκιμή με Demo Δεδομένα
-            </v-btn>
+          <div v-if="!hasData" class="d-flex flex-column flex-sm-row justify-center align-center ga-4 mt-6 text-medium-emphasis">
+              <span class="text-body-2 font-italic">Δεν θέλετε να ανεβάσετε δικό σας προσωπικό αρχείο;</span>
+              <v-btn
+                variant="tonal"
+                color="primary"
+                class="text-none font-weight-bold px-6 py-2 rounded-lg"
+                prepend-icon="mdi-sparkles"
+                @click="handleLoadDemoData"
+                elevation="1"
+              >
+                Δοκιμή με Demo Δεδομένα
+              </v-btn>
           </div>
         </div>
 
@@ -219,16 +230,6 @@
 
         </div>
 
-        <!-- Κατάσταση Κενού Περιεχομένου (Empty State) -->
-        <div v-if="!hasData" class="text-center py-12">
-            <div class="d-inline-flex align-center justify-center pa-6 rounded-circle bg-primary-lighten-5 mb-4" style="width: 80px; height: 80px;">
-                <v-icon icon="mdi-wallet" color="primary" size="40"></v-icon>
-            </div>
-            <h2 class="text-h5 font-weight-bold mb-2">Καλωσήρθατε στο NBG Analytics</h2>
-            <p class="text-body-1 text-medium-emphasis mx-auto" style="max-width: 500px">
-                Ανεβάστε το αρχείο Excel από την τράπεζά σας για να δείτε αναλυτικά στατιστικά των συναλλαγών σας.
-            </p>
-        </div>
       </v-container>
     </v-main>
   </div>

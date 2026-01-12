@@ -201,67 +201,87 @@ export function Dashboard() {
         </div>
       </header>
 
-      <main className="container py-8 space-y-8">
+      <main className="container pb-6 pt-0 space-y-6">
+        {!hasData && (
+          <div className="text-center pt-8 pb-4 animate-in fade-in slide-in-from-top-4 duration-700">
+            <h2 className="text-2xl font-black text-foreground mb-2 tracking-tight">
+              Καλωσήρθατε στο <span className="text-primary">NBG Analytics</span>
+            </h2>
+            <p className="text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              Ο πιο απλός τρόπος για να αποκτήσετε πλήρη εικόνα των οικονομικών σας.
+              Ανεβάστε το αρχείο Excel της Εθνικής Τράπεζας και δείτε τις δαπάνες σας να ζωντανεύουν.
+            </p>
+          </div>
+        )}
         <div className="space-y-4">
           {!hasData && (
-            <div className="bg-primary/5 rounded-lg border border-primary/20 p-6 mb-6">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="bg-primary/10 p-2 rounded-full">
-                  <Wallet className="w-5 h-5 text-primary" />
-                </div>
-                <h3 className="text-lg font-bold text-foreground">Πώς να ξεκινήσετε:</h3>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-background shadow-sm border border-border">
-                    <span className="text-primary font-bold">1</span>
+            <div className="bg-card rounded-xl border border-border overflow-hidden shadow-md mb-6 transition-all hover:shadow-lg">
+              <div className="bg-primary/5 px-6 py-4 border-b border-border flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary/10 p-2 rounded-lg">
+                    <Sparkles className="w-5 h-5 text-primary" />
                   </div>
-                  <p className="text-foreground pt-1">Σύνδεση στο Digital Banking της <span className="font-bold text-primary">Εθνικής Τράπεζας Ελλάδος</span></p>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-background shadow-sm border border-border">
-                    <span className="text-primary font-bold">2</span>
-                  </div>
-                  <p className="text-foreground pt-1">Μεταβείτε στους <span className="font-bold">Λογαριασμούς</span> και επιλέξτε τον λογαριασμό που θέλετε</p>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-background shadow-sm border border-border">
-                    <span className="text-primary font-bold">3</span>
-                  </div>
-                  <p className="text-foreground pt-1">Πατήστε <span className="font-bold">"Λήψη Excel"</span> από το ιστορικό κινήσεων</p>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-background shadow-sm border border-border">
-                    <span className="text-primary font-bold">4</span>
-                  </div>
-                  <p className="text-foreground pt-1">Σύρετε το αρχείο (Drag & Drop) στο πλαίσιο παρακάτω</p>
+                  <h3 className="text-lg font-bold text-foreground">Ξεκινήστε τώρα σε 3 απλά βήματα</h3>
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-dashed border-primary/20">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                  <span>
-                    Δεν έχετε πρόχειρο αρχείο; Μπορείτε να δοκιμάσετε την εφαρμογή αμέσως πατώντας{' '}
-                    <span className="font-bold text-primary">"Δοκιμή με Demo Δεδομένα"</span> παρακάτω.
-                  </span>
+              <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+                {/* Step 1 */}
+                <div className="flex flex-col gap-3 relative z-10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <Wallet className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Βήμα 1</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-foreground mb-1">Σύνδεση</h4>
+                    <p className="text-sm text-muted-foreground line-clamp-2">Στο <a href="https://ebanking.nbg.gr/web/" target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline">Digital Banking</a> της Εθνικής Τράπεζας.</p>
+                  </div>
+                </div>
+
+                {/* Step 2 */}
+                <div className="flex flex-col gap-3 relative z-10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <TrendingDown className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Βήμα 2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-foreground mb-1">Λήψη Excel</h4>
+                    <p className="text-sm text-muted-foreground line-clamp-2 italic">Λογαριασμοί &gt; Λήψη Excel</p>
+                  </div>
+                </div>
+
+                {/* Step 3 */}
+                <div className="flex flex-col gap-3 relative z-10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <CreditCard className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Βήμα 3</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-foreground mb-1">Ανέβασμα</h4>
+                    <p className="text-sm text-muted-foreground">Σύρετε το αρχείο στο πλαίσιο παρακάτω.</p>
+                  </div>
                 </div>
               </div>
             </div>
           )}
           <FileUpload onUpload={handleUpload} />
           {!hasData && (
-            <div className="flex justify-center">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-3 text-muted-foreground animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-500">
+              <span className="text-sm italic">Δεν θέλετε να ανεβάσετε δικό σας προσωπικό αρχείο;</span>
               <Button
                 onClick={handleLoadDemoData}
-                className="gap-2 bg-gradient-to-r from-primary/90 to-primary hover:from-primary hover:to-primary/90 shadow-lg px-8 py-6 text-lg transition-all hover:scale-105"
+                variant="secondary"
+                className="group relative overflow-hidden bg-primary/10 hover:bg-primary/20 text-primary border-primary/20 hover:border-primary/40 transition-all duration-300 px-6"
               >
-                <Sparkles className="w-5 h-5" />
-                Δοκιμή με Demo Δεδομένα
+                <Sparkles className="w-4 h-4 mr-2 group-hover:animate-pulse" />
+                <span className="relative z-10">Δοκιμή με Demo Δεδομένα</span>
+                <div className="absolute inset-0 bg-primary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               </Button>
             </div>
           )}
@@ -346,21 +366,6 @@ export function Dashboard() {
               />
             </CollapsibleCard>
           </>
-        )}
-
-        {!hasData && (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-              <Wallet className="w-8 h-8 text-primary" />
-            </div>
-            <h2 className="text-xl font-semibold text-foreground mb-2">
-              Καλωσήρθατε στο NBG Analytics
-            </h2>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Ανεβάστε το αρχείο Excel από την τράπεζά σας για να δείτε αναλυτικά
-              στατιστικά των συναλλαγών σας.
-            </p>
-          </div>
         )}
       </main>
     </div>

@@ -28,7 +28,7 @@ export function FileUpload({ onUpload }: FileUploadProps) {
     try {
       const transactions = await parseExcelFile(file);
       const newCount = onUpload(transactions);
-      
+
       toast({
         title: 'Επιτυχής εισαγωγή',
         description: `Προστέθηκαν ${newCount} νέες συναλλαγές`,
@@ -57,40 +57,40 @@ export function FileUpload({ onUpload }: FileUploadProps) {
   }, [handleFile]);
 
   return (
-    <Card 
-      className={`border-2 border-dashed transition-all duration-300 cursor-pointer hover:border-primary hover:bg-primary/5 ${
-        isDragging ? 'border-primary bg-primary/10 scale-[1.02]' : 'border-border'
-      }`}
+    <Card
+      className={`relative overflow-hidden transition-all duration-500 cursor-pointer border-2 ${isDragging
+          ? 'border-primary bg-primary/5 shadow-2xl scale-[1.01]'
+          : 'border-dashed border-muted-foreground/20 bg-background/50 hover:border-primary/50 hover:bg-primary/[0.02] shadow-sm hover:shadow-md'
+        }`}
       onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
     >
-      <CardContent className="p-8">
-        <label className="flex flex-col items-center gap-4 cursor-pointer">
-          <div className={`p-4 rounded-full transition-colors ${
-            isDragging ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'
-          }`}>
+      <CardContent className="p-12">
+        <label className="flex flex-col items-center gap-6 cursor-pointer relative z-10">
+          <div className={`w-20 h-20 rounded-2xl flex items-center justify-center transition-all duration-300 ${isDragging ? 'bg-primary text-primary-foreground rotate-0 scale-110' : 'bg-primary/10 text-primary -rotate-3 hover:rotate-0'
+            }`}>
             {isProcessing ? (
-              <div className="w-8 h-8 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              <div className="w-10 h-10 border-4 border-current border-t-transparent rounded-full animate-spin" />
             ) : (
-              <Upload className="w-8 h-8" />
+              <Upload className="w-10 h-10" />
             )}
           </div>
-          
+
           <div className="text-center">
-            <p className="text-lg font-medium text-foreground">
-              {isProcessing ? 'Επεξεργασία...' : 'Σύρετε το αρχείο Excel εδώ'}
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">
-              ή κάντε κλικ για να επιλέξετε αρχείο
+            <h3 className="text-2xl font-bold text-foreground mb-2">
+              {isProcessing ? 'Επεξεργασία αρχείου...' : 'Σύρετε το αρχείο Excel εδώ'}
+            </h3>
+            <p className="text-muted-foreground">
+              ή κάντε κλικ για αναζήτηση στον υπολογιστή σας
             </p>
           </div>
-          
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <FileSpreadsheet className="w-4 h-4" />
-            <span>Υποστηριζόμενα: .xlsx, .xls</span>
+
+          <div className="flex items-center gap-3 px-4 py-2 bg-muted/30 rounded-full text-xs font-medium text-muted-foreground border border-border/50">
+            <FileSpreadsheet className="w-4 h-4 text-primary" />
+            <span>Υποστηρίζονται αρχεία .xlsx & .xls</span>
           </div>
-          
+
           <input
             type="file"
             accept=".xlsx,.xls"

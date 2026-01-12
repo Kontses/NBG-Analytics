@@ -2,10 +2,10 @@
   <v-hover v-slot="{ isHovering, props }">
   <v-card
     v-bind="props"
-    class="border-dashed transition-all cursor-pointer"
+    class="rounded-xl transition-all cursor-pointer relative"
     :class="{ 
-      'bg-primary-lighten-5 border-primary': isDragging || isHovering, 
-      'border-medium-emphasis': !isDragging && !isHovering 
+      'bg-primary-lighten-5 border-primary elevation-8': isDragging || isHovering, 
+      'bg-grey-lighten-5 border-dashed': !isDragging && !isHovering 
     }"
     elevation="0"
     variant="outlined"
@@ -13,29 +13,30 @@
     @dragleave.prevent="isDragging = false"
     @drop.prevent="handleDrop"
     @click="triggerFileInput"
-    style="border-style: dashed !important; border-width: 2px !important;"
+    style="border-width: 2px !important; transition: all 0.5s ease;"
   >
-    <v-card-text class="pa-8 d-flex flex-column align-center justify-center ga-4">
+    <v-card-text class="pa-12 d-flex flex-column align-center justify-center ga-6">
       <div 
-        class="pa-4 rounded-circle transition-all"
-        :class="isDragging || isHovering ? 'bg-primary text-white' : 'bg-primary-lighten-5 text-primary'"
+        class="pa-6 rounded-xl transition-all duration-300"
+        :class="isDragging || isHovering ? 'bg-primary text-white elevation-4 rotate-0' : 'bg-primary-lighten-4 text-primary'"
+        style="transform: rotate(-3deg);"
       >
-        <v-progress-circular v-if="isProcessing" indeterminate color="currentColor" size="32"></v-progress-circular>
-        <v-icon v-else icon="mdi-upload" size="32"></v-icon>
+        <v-progress-circular v-if="isProcessing" indeterminate color="currentColor" size="40"></v-progress-circular>
+        <v-icon v-else icon="mdi-cloud-upload-outline" size="48"></v-icon>
       </div>
 
       <div class="text-center">
-        <p class="text-h6 font-weight-medium mb-1">
-          {{ isProcessing ? 'Επεξεργασία...' : 'Σύρετε το αρχείο Excel εδώ' }}
-        </p>
-        <p class="text-caption text-medium-emphasis">
-          ή κάντε κλικ για να επιλέξετε αρχείο
+        <h3 class="text-h5 font-weight-bold mb-2">
+          {{ isProcessing ? 'Επεξεργασία αρχείου...' : 'Σύρετε το αρχείο Excel εδώ' }}
+        </h3>
+        <p class="text-body-1 text-medium-emphasis">
+          ή κάντε κλικ για αναζήτηση στον υπολογιστή σας
         </p>
       </div>
 
-      <div class="d-flex align-center gap-2 text-caption text-medium-emphasis">
-        <v-icon icon="mdi-file-excel" size="16"></v-icon>
-        <span>Υποστηριζόμενα: .xlsx, .xls</span>
+      <div class="d-flex align-center px-4 py-2 bg-white rounded-pill elevation-1 ga-2">
+        <v-icon icon="mdi-file-excel" color="primary" size="small"></v-icon>
+        <span class="text-caption font-weight-medium text-medium-emphasis">Υποστηρίζονται αρχεία .xlsx & .xls</span>
       </div>
 
       <input
