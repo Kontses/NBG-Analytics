@@ -140,7 +140,7 @@ export const TransactionList = memo(function TransactionList({
               value={txn.customCategory || 'Άλλο'}
               onValueChange={(val) => onCategoryChange(txn.id, val, txn.counterpartyName)}
             >
-              <SelectTrigger className="h-7 w-[120px] text-xs">
+              <SelectTrigger className="h-7 w-[150px] text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
