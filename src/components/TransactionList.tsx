@@ -78,6 +78,7 @@ export const TransactionList = memo(function TransactionList({
   const [search, setSearch] = useState('');
   const [internalCategoryFilter, setInternalCategoryFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [sortOption, setSortOption] = useState<string>('date-desc');
 
   // Χρήση εξωτερικού φίλτρου αν υπάρχει
   const categoryFilter = externalCategoryFilter ?? (internalCategoryFilter === 'all' ? null : internalCategoryFilter);
@@ -97,6 +98,24 @@ export const TransactionList = memo(function TransactionList({
     const matchesCategory = !categoryFilter || txn.customCategory === categoryFilter;
     const matchesType = typeFilter === 'all' || txn.type === typeFilter;
     return matchesSearch && matchesCategory && matchesType;
+  }).sort((a, b) => {
+    switch (sortOption) {
+      case 'amount-asc':
+        const valA_asc = a.type === 'credit' ? a.amount : -a.amount;
+        const valB_asc = b.type === 'credit' ? b.amount : -b.amount;
+        return valA_asc - valB_asc;
+      case 'amount-desc':
+        const valA_desc = a.type === 'credit' ? a.amount : -a.amount;
+        const valB_desc = b.type === 'credit' ? b.amount : -b.amount;
+        return valB_desc - valA_desc;
+      case 'name-asc':
+        const nameA = a.counterpartyName || a.description || 'Άγνωστη συναλλαγή';
+        const nameB = b.counterpartyName || b.description || 'Άγνωστη συναλλαγή';
+        return nameA.localeCompare(nameB, 'el');
+      case 'date-desc':
+      default:
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+    }
   });
 
   // @ts-ignore
@@ -171,6 +190,17 @@ export const TransactionList = memo(function TransactionList({
               className="pl-9 w-full sm:w-[200px]"
             />
           </div>
+          <Select value={sortOption} onValueChange={setSortOption}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Ταξινόμηση" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="date-desc">Πιο πρόσφατα</SelectItem>
+              <SelectItem value="amount-asc">Αύξουσα τιμή</SelectItem>
+              <SelectItem value="amount-desc">Φθίνουσα τιμή</SelectItem>
+              <SelectItem value="name-asc">A-Z</SelectItem>
+            </SelectContent>
+          </Select>
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger className="w-full sm:w-[130px]">
               <SelectValue placeholder="Τύπος" />
