@@ -30,6 +30,9 @@ const formatCurrency = (value: number) => {
 
 const CustomTooltip = forwardRef<HTMLDivElement, any>(({ active, payload, label }, ref) => {
   if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    const netResult = data.income - data.expenses;
+
     return (
       <div ref={ref} className="bg-card border border-border rounded-lg shadow-lg p-3">
         <p className="font-medium text-foreground mb-2">{formatMonth(label)}</p>
@@ -38,6 +41,11 @@ const CustomTooltip = forwardRef<HTMLDivElement, any>(({ active, payload, label 
             {entry.name}: {formatCurrency(entry.value)}
           </p>
         ))}
+        <div className="mt-2 pt-2 border-t border-border">
+          <p className={`text-sm font-bold ${netResult >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            Καθαρό: {netResult >= 0 ? '+' : ''}{formatCurrency(netResult)}
+          </p>
+        </div>
         <p className="text-xs text-muted-foreground mt-2">Κάντε κλικ για φιλτράρισμα</p>
       </div>
     );
