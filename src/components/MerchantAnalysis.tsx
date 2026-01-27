@@ -84,7 +84,7 @@ export function MerchantAnalysis({ transactions, selectedCategory }: MerchantAna
                 }
                 return b.count - a.count;
             }); // Ταξινόμηση βάσει συνολικών εξόδων
-    }, [transactions, sortOption]);
+    }, [transactions, sortOption, selectedCategory]);
 
     const frequentMerchantsCount = merchantStats.filter(m => m.count >= 5).length;
     const totalRepeatedSpend = merchantStats.reduce((sum, m) => sum + m.totalAmount, 0);

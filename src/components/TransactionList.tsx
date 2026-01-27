@@ -5,9 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Transaction, DEFAULT_CATEGORIES } from '@/types/transaction';
-// @ts-ignore
 import { List as FixedSizeList } from 'react-window';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const List = FixedSizeList as any;
 
 interface TransactionListProps {
@@ -100,25 +100,27 @@ export const TransactionList = memo(function TransactionList({
     return matchesSearch && matchesCategory && matchesType;
   }).sort((a, b) => {
     switch (sortOption) {
-      case 'amount-asc':
+      case 'amount-asc': {
         const valA_asc = a.type === 'credit' ? a.amount : -a.amount;
         const valB_asc = b.type === 'credit' ? b.amount : -b.amount;
         return valA_asc - valB_asc;
-      case 'amount-desc':
+      }
+      case 'amount-desc': {
         const valA_desc = a.type === 'credit' ? a.amount : -a.amount;
         const valB_desc = b.type === 'credit' ? b.amount : -b.amount;
         return valB_desc - valA_desc;
-      case 'name-asc':
+      }
+      case 'name-asc': {
         const nameA = a.counterpartyName || a.description || 'Άγνωστη συναλλαγή';
         const nameB = b.counterpartyName || b.description || 'Άγνωστη συναλλαγή';
         return nameA.localeCompare(nameB, 'el');
+      }
       case 'date-desc':
       default:
         return new Date(b.date).getTime() - new Date(a.date).getTime();
     }
   });
 
-  // @ts-ignore
   const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
     const txn = filtered[index];
     if (!txn) return null;
@@ -237,7 +239,6 @@ export const TransactionList = memo(function TransactionList({
                 style={{ width, height }}
                 rowCount={filtered.length}
                 rowHeight={100}
-                // @ts-ignore
                 rowComponent={Row}
                 rowProps={{}}
               />

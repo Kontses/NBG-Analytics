@@ -28,6 +28,7 @@ export function useTransactions() {
 
         if (stored) {
             const parsed = JSON.parse(stored);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transactions.value = parsed.map((t: any) => ({
                 ...t,
                 date: new Date(t.date)

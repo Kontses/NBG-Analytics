@@ -60,6 +60,7 @@ export function Dashboard() {
 
   const datePickerRef = useRef<HTMLDivElement>(null);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleUpload = useCallback((data: any[]) => {
     const count = addTransactions(data);
     setTimeout(() => {
@@ -341,7 +342,13 @@ export function Dashboard() {
 
             {/* Τάση Υπολοίπου - Πάντα ορατή */}
             <div className="mb-8">
-              <BalanceTrendChart transactions={filteredTransactions} />
+              <BalanceTrendChart
+                transactions={filteredTransactions}
+                onDateRangeSelect={(start, end) => {
+                  setStartDate(start);
+                  setEndDate(end);
+                }}
+              />
             </div>
 
             {/* Accordion για Συναλλαγές και Ανάλυση Εμπόρων - Εναλλάξ (Accordion behavior) */}

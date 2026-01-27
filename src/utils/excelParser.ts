@@ -60,6 +60,7 @@ export function parseExcelFile(file: File): Promise<Transaction[]> {
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false });
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const transactions: Transaction[] = jsonData.map((row: any, index) => {
           const transaction: Partial<Transaction> = {
             id: `txn-${Date.now()}-${index}`,
@@ -75,6 +76,7 @@ export function parseExcelFile(file: File): Promise<Transaction[]> {
             } else if (englishKey === 'amount' || englishKey === 'orderAmount' || englishKey === 'accountBalance') {
               transaction[englishKey] = parseFloat(String(value).replace(',', '.')) || 0;
             } else {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (transaction as any)[englishKey] = value || '';
             }
           });

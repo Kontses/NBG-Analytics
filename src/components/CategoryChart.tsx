@@ -32,6 +32,7 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomTooltip = forwardRef<HTMLDivElement, any>(({ active, payload }, ref) => {
   if (active && payload && payload.length) {
     const data = payload[0];
@@ -48,6 +49,7 @@ const CustomTooltip = forwardRef<HTMLDivElement, any>(({ active, payload }, ref)
 export const CategoryChart = memo(function CategoryChart({ data, selectedCategory, onCategoryClick }: CategoryChartProps) {
   const total = data.reduce((sum, item) => sum + item.amount, 0);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handlePieClick = (data: any) => {
     if (onCategoryClick) {
       const clickedCategory = data.category;
@@ -110,6 +112,7 @@ export const CategoryChart = memo(function CategoryChart({ data, selectedCategor
                 align="right"
                 verticalAlign="middle"
                 wrapperStyle={{ fontSize: 12 }}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 formatter={(value, entry: any) => {
                   const percent = total > 0 ? ((entry.payload.amount / total) * 100).toFixed(0) : 0;
                   return (

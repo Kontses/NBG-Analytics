@@ -1,11 +1,12 @@
-import { useMemo, forwardRef, memo } from 'react';
+import { useMemo, forwardRef, memo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
 import { TrendingUp } from 'lucide-react';
 import { Transaction } from '@/types/transaction';
 
 interface BalanceTrendChartProps {
   transactions: Transaction[];
+  onDateRangeSelect?: (start: Date, end: Date) => void;
 }
 
 const formatCurrency = (value: number) => {
@@ -16,6 +17,7 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomTooltip = forwardRef<HTMLDivElement, any>(({ active, payload, label }, ref) => {
   if (active && payload && payload.length) {
     return (
@@ -28,7 +30,10 @@ const CustomTooltip = forwardRef<HTMLDivElement, any>(({ active, payload, label 
   return null;
 });
 
-export const BalanceTrendChart = memo(function BalanceTrendChart({ transactions }: BalanceTrendChartProps) {
+export const BalanceTrendChart = memo(function BalanceTrendChart({ transactions, onDateRangeSelect }: BalanceTrendChartProps) {
+  const [refAreaLeft, setRefAreaLeft] = useState<string | null>(null);
+  const [refAreaRight, setRefAreaRight] = useState<string | null>(null);
+
   const { balanceData, monthStartIndices } = useMemo(() => {
     if (transactions.length === 0) return { balanceData: [], monthStartIndices: [] };
 
@@ -81,6 +86,42 @@ export const BalanceTrendChart = memo(function BalanceTrendChart({ transactions 
     return { balanceData: dailyBalances, monthStartIndices: monthStarts };
   }, [transactions]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onMouseDown = (e: any) => {
+    if (e && e.activeLabel) {
+      setRefAreaLeft(e.activeLabel);
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onMouseMove = (e: any) => {
+    if (refAreaLeft && e && e.activeLabel) {
+      setRefAreaRight(e.activeLabel);
+    }
+  };
+
+  const onMouseUp = () => {
+    if (refAreaLeft && refAreaRight && onDateRangeSelect) {
+      // Find original dates from display dates
+      const startItem = balanceData.find(d => d.displayDate === refAreaLeft);
+      const endItem = balanceData.find(d => d.displayDate === refAreaRight);
+
+      if (startItem && endItem) {
+        let startDate = new Date(startItem.date);
+        let endDate = new Date(endItem.date);
+
+        // Ensure start is before end
+        if (startDate > endDate) {
+          [startDate, endDate] = [endDate, startDate];
+        }
+
+        onDateRangeSelect(startDate, endDate);
+      }
+    }
+    setRefAreaLeft(null);
+    setRefAreaRight(null);
+  };
+
   if (balanceData.length === 0) {
     return null;
   }
@@ -93,15 +134,21 @@ export const BalanceTrendChart = memo(function BalanceTrendChart({ transactions 
   ];
 
   return (
-    <Card className="col-span-full">
+    <Card className="col-span-full select-none">
       <CardHeader className="flex flex-row items-center gap-2">
         <TrendingUp className="w-5 h-5 text-primary" />
-        <CardTitle className="text-lg">Εξέλιξη Υπολοίπου</CardTitle>
+        <CardTitle className="text-lg">Εξέλιξη Υπολοίπου (Σύρετε για επιλογή περιόδου)</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={balanceData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+            <LineChart
+              data={balanceData}
+              margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+              onMouseDown={onMouseDown}
+              onMouseMove={onMouseMove}
+              onMouseUp={onMouseUp}
+            >
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis
                 dataKey="displayDate"
@@ -131,6 +178,15 @@ export const BalanceTrendChart = memo(function BalanceTrendChart({ transactions 
                   }}
                 />
               ))}
+              {refAreaLeft && refAreaRight ? (
+                <ReferenceArea
+                  x1={refAreaLeft}
+                  x2={refAreaRight}
+                  strokeOpacity={0.3}
+                  fill="hsl(var(--primary))"
+                  fillOpacity={0.3}
+                />
+              ) : null}
               <Line
                 type="monotone"
                 dataKey="balance"

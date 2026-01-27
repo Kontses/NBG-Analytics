@@ -19,6 +19,7 @@ export function useTransactions() {
 
     if (stored) {
       const parsed = JSON.parse(stored);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setTransactions(parsed.map((t: any) => ({
         ...t,
         date: new Date(t.date)
@@ -114,6 +115,7 @@ export function useTransactions() {
         return currentMappings;
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return hasChanges ? JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').map((t: any) => ({ ...t, date: new Date(t.date) })) : currentTransactions;
     });
 

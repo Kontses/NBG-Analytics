@@ -28,6 +28,7 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomTooltip = forwardRef<HTMLDivElement, any>(({ active, payload, label }, ref) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
@@ -36,6 +37,7 @@ const CustomTooltip = forwardRef<HTMLDivElement, any>(({ active, payload, label 
     return (
       <div ref={ref} className="bg-card border border-border rounded-lg shadow-lg p-3">
         <p className="font-medium text-foreground mb-2">{formatMonth(label)}</p>
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         {payload.map((entry: any, index: number) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
             {entry.name}: {formatCurrency(entry.value)}
@@ -54,6 +56,7 @@ const CustomTooltip = forwardRef<HTMLDivElement, any>(({ active, payload, label 
 });
 
 export const MonthlyChart = memo(function MonthlyChart({ data, onMonthClick }: MonthlyChartProps) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleClick = (data: any) => {
     if (data && data.activePayload && data.activePayload.length > 0 && onMonthClick) {
       onMonthClick(data.activePayload[0].payload.month);
