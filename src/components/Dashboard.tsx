@@ -1,11 +1,12 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import { Wallet, TrendingUp, TrendingDown, CreditCard, Trash2, RefreshCw, Store, Sparkles } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, CreditCard, Trash2, RefreshCw, Store, Sparkles, Target } from 'lucide-react';
 import { StatCard } from './StatCard';
 import { MonthlyChart } from './MonthlyChart';
 import { CategoryChart } from './CategoryChart';
 import { BalanceTrendChart } from './BalanceTrendChart';
 import { MerchantAnalysis } from './MerchantAnalysis';
 import { TransactionList } from './TransactionList';
+import { SavingsGoalCalculator } from './SavingsGoalCalculator';
 import { FileUpload } from './FileUpload';
 import { DateRangePicker } from './DateRangePicker';
 import {
@@ -351,7 +352,12 @@ export function Dashboard() {
               />
             </div>
 
-            {/* Accordion για Συναλλαγές και Ανάλυση Εμπόρων - Εναλλάξ (Accordion behavior) */}
+            {/* Savings Goal - Πάντα ορατό */}
+            <div className="mb-6">
+              <SavingsGoalCalculator currentBalance={totalBalance} />
+            </div>
+
+            {/* Accordion για Συναλλαγές και Ανάλυση Εμπόρων */}
             <Accordion type="single" collapsible className="space-y-6">
               <AccordionItem value="transactions" className="bg-card rounded-xl border border-border px-6 shadow-sm">
                 <AccordionTrigger className="hover:no-underline py-6">
