@@ -332,6 +332,11 @@ export function Dashboard() {
               />
             </div>
 
+            {/* Savings Goal Wishlist - Moved to top for better visibility */}
+            <div className="mb-6">
+              <SavingsGoalCalculator currentBalance={totalBalance} />
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <MonthlyChart data={displayMonthlyStats} onMonthClick={handleMonthClick} />
               <CategoryChart
@@ -350,11 +355,6 @@ export function Dashboard() {
                   setEndDate(end);
                 }}
               />
-            </div>
-
-            {/* Savings Goal Wishlist */}
-            <div className="mb-6">
-              <SavingsGoalCalculator currentBalance={totalBalance} />
             </div>
 
             {/* Accordion για Συναλλαγές και Ανάλυση Εμπόρων */}
