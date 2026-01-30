@@ -5,28 +5,41 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
-import { Calculator, Calendar, Target, PiggyBank } from 'lucide-react';
+import { Target, PiggyBank, Plus, Trash2, Calendar, TrendingUp } from 'lucide-react';
 import { format } from 'date-fns';
 import { el } from 'date-fns/locale';
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 
 interface SavingsGoalCalculatorProps {
     currentBalance: number;
 }
 
-const STORAGE_KEY = 'banktrack_savings_goal';
+const STORAGE_KEY = 'banktrack_savings_wishlist';
 
-interface SavingsGoalState {
-    targetAmount: number;
+interface WishlistItem {
+    id: string;
+    name: string;
+    amount: number;
+    targetDate: string; // YYYY-MM
+}
+
+interface SavingsState {
+    items: WishlistItem[];
     useCurrentBalance: boolean;
     manualCurrentAmount: number;
-    targetDate: string; // ISO date string YYYY-MM
 }
 
 export function SavingsGoalCalculator({ currentBalance }: SavingsGoalCalculatorProps) {
-    const [state, setState] = useState<SavingsGoalState>({
-        targetAmount: 10000,
+    const [state, setState] = useState<SavingsState>({
+        items: [],
         useCurrentBalance: true,
         manualCurrentAmount: 0,
+    });
+
+    const [newItem, setNewItem] = useState<{ name: string; amount: string; targetDate: string }>({
+        name: '',
+        amount: '',
         targetDate: ''
     });
 
@@ -36,10 +49,20 @@ export function SavingsGoalCalculator({ currentBalance }: SavingsGoalCalculatorP
         if (stored) {
             try {
                 const parsed = JSON.parse(stored);
-                setState({
-                    ...parsed,
-                    // Ensure compatibility if we add fields later
-                });
+                if (parsed.items) {
+                    setState({ ...parsed });
+                } else if (parsed.targetAmount) {
+                    setState({
+                        items: [{
+                            id: crypto.randomUUID(),
+                            name: 'Γενικός Στόχος',
+                            amount: parsed.targetAmount,
+                            targetDate: parsed.targetDate
+                        }],
+                        useCurrentBalance: parsed.useCurrentBalance ?? true,
+                        manualCurrentAmount: parsed.manualCurrentAmount ?? 0
+                    });
+                }
             } catch (e) {
                 console.error("Failed to parse savings goal", e);
             }
@@ -51,145 +74,219 @@ export function SavingsGoalCalculator({ currentBalance }: SavingsGoalCalculatorP
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }, [state]);
 
-    const currentAmount = state.useCurrentBalance ? currentBalance : state.manualCurrentAmount;
-    const remainingAmount = Math.max(0, state.targetAmount - currentAmount);
-    const progress = Math.min(100, Math.max(0, (currentAmount / state.targetAmount) * 100));
+    const handleAddItem = () => {
+        if (!newItem.name || !newItem.amount || !newItem.targetDate) return;
+
+        const item: WishlistItem = {
+            id: crypto.randomUUID(),
+            name: newItem.name,
+            amount: parseFloat(newItem.amount),
+            targetDate: newItem.targetDate
+        };
+
+        setState(prev => ({ ...prev, items: [...prev.items, item] }));
+        setNewItem({ name: '', amount: '', targetDate: '' });
+    };
+
+    const handleDeleteItem = (id: string) => {
+        setState(prev => ({ ...prev, items: prev.items.filter(i => i.id !== id) }));
+    };
+
+    const currentTotalSavings = state.useCurrentBalance ? currentBalance : state.manualCurrentAmount;
 
     const calculations = useMemo(() => {
-        if (!state.targetDate) return null;
-
+        let totalTarget = 0;
+        let totalMonthlyRequired = 0;
         const today = new Date();
-        const target = new Date(state.targetDate);
 
-        // Calculate months difference
-        const yearsDiff = target.getFullYear() - today.getFullYear();
-        const monthsDiff = target.getMonth() - today.getMonth();
-        const totalMonths = (yearsDiff * 12) + monthsDiff;
+        totalTarget = state.items.reduce((sum, item) => sum + item.amount, 0);
 
-        // We count the current month as a partial month, so let's aim for at least 1 month if it's the same month
-        // better logic: difference in milliseconds converted to months roughly, or just simple month diff
-        // Assume we want to achieve it by the END of the target month.
+        // Sort by date (earliest first) to apply savings to most urgent goals
+        // We use String comparison for YYYY-MM-DD which is safe and fast
+        const sortedItems = [...state.items].sort((a, b) => a.targetDate.localeCompare(b.targetDate));
 
-        const validMonths = Math.max(0.5, totalMonths); // Avoid division by zero
+        // Waterfall deduction
+        let remainingSavings = currentTotalSavings;
 
-        const monthlySavings = remainingAmount / validMonths;
+        sortedItems.forEach(item => {
+            let needed = item.amount;
 
-        return {
-            monthlySavings,
-            monthsRemaining: totalMonths
-        };
-    }, [state.targetDate, remainingAmount]);
+            // Deduct available savings from this specific item
+            if (remainingSavings >= needed) {
+                remainingSavings -= needed;
+                needed = 0;
+            } else {
+                needed -= remainingSavings;
+                remainingSavings = 0;
+            }
+
+            // If we still need money for this item, calculate monthly rate
+            if (needed > 0) {
+                const target = new Date(item.targetDate);
+                // Difference in months. 
+                // We use Math.max(1, ...) to avoid division by zero or panic values for current month.
+                // If it is this month (diff=0), divide by 1 (pay full amount now).
+                const monthsDiff = (target.getFullYear() - today.getFullYear()) * 12 + (target.getMonth() - today.getMonth());
+                const validMonths = Math.max(1, monthsDiff);
+                totalMonthlyRequired += (needed / validMonths);
+            }
+        });
+
+        const progress = totalTarget > 0 ? Math.min(100, Math.max(0, (currentTotalSavings / totalTarget) * 100)) : 0;
+
+        return { totalTarget, totalMonthlyRequired, progress };
+    }, [state.items, currentTotalSavings]);
 
     const formatCurrency = (val: number) =>
         new Intl.NumberFormat('el-GR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val);
 
     return (
-        <Card className="bg-gradient-to-br from-card to-secondary/10">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="shadow-md">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-xl font-bold flex items-center gap-2">
                     <Target className="w-5 h-5 text-primary" />
-                    Στόχος Αποταμίευσης
+                    Στόχοι Αποταμίευσης
                 </CardTitle>
-                <PiggyBank className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent className="space-y-6 pt-4">
 
-                <div className="grid gap-4 md:grid-cols-2">
-                    {/* Input Section */}
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="targetAmount">Στόχος (€)</Label>
-                            <div className="relative">
+            <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                    {/* LEFT COLUMN: Wishlist Manager (Inputs + List) */}
+                    <div className="space-y-6">
+
+                        {/* Add New Item Form */}
+                        <div className="space-y-4 p-4 bg-card rounded-lg border border-border shadow-sm">
+                            <div className="flex items-center gap-2 text-sm font-semibold text-foreground/80 mb-2">
+                                <Plus className="w-4 h-4" /> Προσθήκη Στόχου
+                            </div>
+                            <div className="flex flex-col gap-3">
                                 <Input
-                                    id="targetAmount"
-                                    type="number"
-                                    value={state.targetAmount || ''}
-                                    onChange={(e) => setState(s => ({ ...s, targetAmount: parseFloat(e.target.value) || 0 }))}
-                                    className="pl-8"
+                                    placeholder="Περιγραφή (π.χ. Διακοπές)"
+                                    value={newItem.name}
+                                    onChange={(e) => setNewItem(s => ({ ...s, name: e.target.value }))}
+                                    className="h-9"
                                 />
-                                <span className="absolute left-3 top-2.5 text-muted-foreground">€</span>
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="currentAmount">Τρέχον Ποσό</Label>
-                                <div className="flex items-center space-x-2">
-                                    <Switch
-                                        id="use-balance"
-                                        checked={state.useCurrentBalance}
-                                        onCheckedChange={(checked) => setState(s => ({ ...s, useCurrentBalance: checked }))}
-                                    />
-                                    <Label htmlFor="use-balance" className="text-xs text-muted-foreground cursor-pointer">
-                                        Χρήση Υπολοίπου
-                                    </Label>
-                                </div>
-                            </div>
-
-                            <div className="relative">
-                                <Input
-                                    id="currentAmount"
-                                    type="number"
-                                    value={state.useCurrentBalance ? currentBalance.toFixed(2) : (state.manualCurrentAmount || '')}
-                                    disabled={state.useCurrentBalance}
-                                    onChange={(e) => setState(s => ({ ...s, manualCurrentAmount: parseFloat(e.target.value) || 0 }))}
-                                    className="pl-8"
-                                />
-                                <span className="absolute left-3 top-2.5 text-muted-foreground">€</span>
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="targetDate">Ημερομηνία Στόχου</Label>
-                            <div className="relative">
-                                <Input
-                                    id="targetDate"
-                                    type="month"
-                                    value={state.targetDate}
-                                    onChange={(e) => setState(s => ({ ...s, targetDate: e.target.value }))}
-                                    className="pl-10"
-                                    min={new Date().toISOString().slice(0, 7)}
-                                />
-                                <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Results Section */}
-                    <div className="flex flex-col justify-center space-y-6 bg-card/50 p-4 rounded-lg border border-border/50">
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                                <span>Πρόοδος</span>
-                                <span className="font-bold">{progress.toFixed(1)}%</span>
-                            </div>
-                            <Progress value={progress} className="h-2" />
-                            <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                                <span>{formatCurrency(currentAmount)}</span>
-                                <span>{formatCurrency(state.targetAmount)}</span>
-                            </div>
-                        </div>
-
-                        {calculations ? (
-                            calculations.monthsRemaining > 0 ? (
-                                <div className="text-center space-y-2">
-                                    <p className="text-sm text-muted-foreground">Για να πετύχετε τον στόχο σας σε {calculations.monthsRemaining} μήνες:</p>
-                                    <div className="text-3xl font-bold text-primary">
-                                        {formatCurrency(calculations.monthlySavings)} <span className="text-sm font-normal text-muted-foreground">/ μήνα</span>
+                                <div className="flex gap-2">
+                                    <div className="relative flex-1">
+                                        <Input
+                                            type="number"
+                                            placeholder="Ποσό"
+                                            value={newItem.amount}
+                                            onChange={(e) => setNewItem(s => ({ ...s, amount: e.target.value }))}
+                                            className="h-9 pl-7"
+                                        />
+                                        <span className="absolute left-2.5 top-2.5 text-xs text-muted-foreground">€</span>
+                                    </div>
+                                    <div className="relative">
+                                        <Input
+                                            type="date"
+                                            value={newItem.targetDate}
+                                            onChange={(e) => setNewItem(s => ({ ...s, targetDate: e.target.value }))}
+                                            className="h-9 w-[160px] text-xs pl-8"
+                                            min={new Date().toISOString().slice(0, 10)}
+                                        />
+                                        <Calendar className="absolute left-2.5 top-2.5 w-4 h-4 text-muted-foreground pointer-events-none" />
                                     </div>
                                 </div>
-                            ) : (
-                                <div className="text-center text-green-600 font-bold">
-                                    Η ημερομηνία έχει παρέλθει ή είναι τώρα!
-                                </div>
-                            )
-                        ) : (
-                            <div className="text-center text-muted-foreground text-sm italic">
-                                Επιλέξτε ημερομηνία για υπολογισμό
+                                <Button size="sm" onClick={handleAddItem} disabled={!newItem.name || !newItem.amount || !newItem.targetDate} className="w-full">
+                                    Προσθήκη στη Λίστα
+                                </Button>
                             </div>
-                        )}
-                    </div>
-                </div>
+                        </div>
 
+                        {/* List of Items */}
+                        <ScrollArea className="h-[200px] -mr-4 pr-4">
+                            <div className="space-y-2">
+                                {state.items.length === 0 ? (
+                                    <div className="text-center py-6 text-muted-foreground text-sm italic">
+                                        Η λίστα σας είναι κενή.
+                                    </div>
+                                ) : (
+                                    state.items.map(item => {
+                                        const targetDate = new Date(item.targetDate);
+                                        return (
+                                            <div key={item.id} className="group flex items-center justify-between p-2.5 rounded-md border bg-card hover:bg-accent/5 transition-all text-sm">
+                                                <div>
+                                                    <div className="font-medium">{item.name}</div>
+                                                    <div className="text-xs text-muted-foreground flex items-center gap-1">
+                                                        <Calendar className="w-3 h-3" />
+                                                        {format(targetDate, 'MMM yyyy', { locale: el })}
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="font-bold">{formatCurrency(item.amount)}</span>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-6 w-6 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        onClick={() => handleDeleteItem(item.id)}
+                                                    >
+                                                        <Trash2 className="w-3 h-3" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                )}
+                            </div>
+                        </ScrollArea>
+                    </div>
+
+                    {/* RIGHT COLUMN: Summary Results */}
+                    <div className="flex flex-col justify-center space-y-6 bg-card p-6 rounded-xl border border-border shadow-sm">
+
+                        {/* Current Balance Settings */}
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <Label className="text-muted-foreground">Τρέχον Διαθέσιμο Ποσό</Label>
+                                <div className="flex items-center gap-2">
+                                    <Label htmlFor="use-balance-switch" className="text-xs text-muted-foreground cursor-pointer">Αυτόματο</Label>
+                                    <Switch
+                                        id="use-balance-switch"
+                                        checked={state.useCurrentBalance}
+                                        onCheckedChange={(checked) => setState(s => ({ ...s, useCurrentBalance: checked }))}
+                                        className="scale-75 origin-right"
+                                    />
+                                </div>
+                            </div>
+                            <Input
+                                type="number"
+                                value={state.useCurrentBalance ? currentBalance.toFixed(2) : (state.manualCurrentAmount || '')}
+                                disabled={state.useCurrentBalance}
+                                onChange={(e) => setState(s => ({ ...s, manualCurrentAmount: parseFloat(e.target.value) || 0 }))}
+                                className="text-lg font-bold bg-background/50 border-transparent shadow-none"
+                            />
+                        </div>
+
+                        <Separator className="bg-border/50" />
+
+                        {/* Progress Stats */}
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-end">
+                                <span className="text-sm font-medium">Πρόοδος</span>
+                                <span className="text-xl font-bold">{calculations.progress.toFixed(1)}%</span>
+                            </div>
+                            <Progress value={calculations.progress} className="h-3" />
+                            <div className="flex justify-between text-xs text-muted-foreground">
+                                <span>{formatCurrency(currentTotalSavings)}</span>
+                                <span>Στόχος: {formatCurrency(calculations.totalTarget)}</span>
+                            </div>
+                        </div>
+
+                        {/* Monthly Requirement */}
+                        <div className="mt-4 pt-4 text-center">
+                            <p className="text-sm text-muted-foreground mb-1">
+                                Για να πετύχετε <u>όλους</u> τους στόχους:
+                            </p>
+                            <div className="text-4xl font-extrabold text-primary tracking-tight">
+                                {formatCurrency(calculations.totalMonthlyRequired)}
+                                <span className="text-lg font-normal text-muted-foreground ml-1">/ μήνα</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </CardContent>
         </Card>
     );

@@ -352,7 +352,7 @@ export function Dashboard() {
               />
             </div>
 
-            {/* Savings Goal - Πάντα ορατό */}
+            {/* Savings Goal Wishlist */}
             <div className="mb-6">
               <SavingsGoalCalculator currentBalance={totalBalance} />
             </div>
