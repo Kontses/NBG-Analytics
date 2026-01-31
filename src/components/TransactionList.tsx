@@ -1,5 +1,6 @@
 import { useState, memo, useEffect, useRef } from 'react';
-import { ArrowDownCircle, ArrowUpCircle, Search, Filter } from 'lucide-react';
+import { ArrowDownCircle, ArrowUpCircle, Search, Filter, ChevronDown, ChevronUp, ArrowRightLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -79,6 +80,15 @@ export const TransactionList = memo(function TransactionList({
   const [internalCategoryFilter, setInternalCategoryFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [sortOption, setSortOption] = useState<string>('date-desc');
+
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const stored = localStorage.getItem('banktrack_transactions_collapsed');
+    return stored ? JSON.parse(stored) : false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('banktrack_transactions_collapsed', JSON.stringify(isCollapsed));
+  }, [isCollapsed]);
 
   // Χρήση εξωτερικού φίλτρου αν υπάρχει
   const categoryFilter = externalCategoryFilter ?? (internalCategoryFilter === 'all' ? null : internalCategoryFilter);
@@ -179,73 +189,89 @@ export const TransactionList = memo(function TransactionList({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-4">
-
-        <div className="flex flex-col sm:flex-row gap-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Αναζήτηση..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 w-full sm:w-[200px]"
-            />
-          </div>
-          <Select value={sortOption} onValueChange={setSortOption}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Ταξινόμηση" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="date-desc">Πιο πρόσφατα</SelectItem>
-              <SelectItem value="amount-asc">Αύξουσα τιμή</SelectItem>
-              <SelectItem value="amount-desc">Φθίνουσα τιμή</SelectItem>
-              <SelectItem value="name-asc">A-Z</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-full sm:w-[130px]">
-              <SelectValue placeholder="Τύπος" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Όλα</SelectItem>
-              <SelectItem value="debit">Χρέωση</SelectItem>
-              <SelectItem value="credit">Πίστωση</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={categoryFilter ?? 'all'} onValueChange={handleCategoryFilterChange}>
-            <SelectTrigger className="w-full sm:w-[150px]">
-              <SelectValue placeholder="Κατηγορία" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Όλες</SelectItem>
-              {DEFAULT_CATEGORIES.map(cat => (
-                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <Card className="shadow-md">
+      <CardHeader className={`flex flex-row items-center justify-between ${isCollapsed ? '' : 'pb-2'}`}>
+        <div
+          className="flex items-center gap-2 cursor-pointer transition-opacity hover:opacity-80"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+        >
+          <ArrowRightLeft className="w-5 h-5 text-primary" />
+          <CardTitle className="text-lg">Συναλλαγές</CardTitle>
         </div>
-      </div>
+        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground transition-all duration-200 hover:scale-110 hover:bg-primary/10 hover:text-primary" onClick={() => setIsCollapsed(!isCollapsed)}>
+          {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+        </Button>
+      </CardHeader>
+      {!isCollapsed && (
+        <CardContent className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-4">
 
-      <div className="h-[400px] border rounded-md bg-card">
-        {filtered.length === 0 ? (
-          <div className="p-8 text-center text-muted-foreground">
-            <p>Δεν βρέθηκαν συναλλαγές</p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Αναζήτηση..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-9 w-full sm:w-[200px]"
+                />
+              </div>
+              <Select value={sortOption} onValueChange={setSortOption}>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="Ταξινόμηση" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="date-desc">Πιο πρόσφατα</SelectItem>
+                  <SelectItem value="amount-asc">Αύξουσα τιμή</SelectItem>
+                  <SelectItem value="amount-desc">Φθίνουσα τιμή</SelectItem>
+                  <SelectItem value="name-asc">A-Z</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-full sm:w-[130px]">
+                  <SelectValue placeholder="Τύπος" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Όλα</SelectItem>
+                  <SelectItem value="debit">Χρέωση</SelectItem>
+                  <SelectItem value="credit">Πίστωση</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={categoryFilter ?? 'all'} onValueChange={handleCategoryFilterChange}>
+                <SelectTrigger className="w-full sm:w-[150px]">
+                  <SelectValue placeholder="Κατηγορία" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Όλες</SelectItem>
+                  {DEFAULT_CATEGORIES.map(cat => (
+                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        ) : (
-          <AutoSizer>
-            {({ height, width }) => (
-              <List
-                style={{ width, height }}
-                rowCount={filtered.length}
-                rowHeight={100}
-                rowComponent={Row}
-                rowProps={{}}
-              />
+
+          <div className="h-[400px] border rounded-md bg-card">
+            {filtered.length === 0 ? (
+              <div className="p-8 text-center text-muted-foreground">
+                <p>Δεν βρέθηκαν συναλλαγές</p>
+              </div>
+            ) : (
+              <AutoSizer>
+                {({ height, width }) => (
+                  <List
+                    style={{ width, height }}
+                    rowCount={filtered.length}
+                    rowHeight={100}
+                    rowComponent={Row}
+                    rowProps={{}}
+                  />
+                )}
+              </AutoSizer>
             )}
-          </AutoSizer>
-        )}
-      </div>
-    </div>
+          </div>
+        </CardContent>
+      )}
+    </Card>
   );
 });

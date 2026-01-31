@@ -9,12 +9,7 @@ import { TransactionList } from './TransactionList';
 import { SavingsGoalCalculator } from './SavingsGoalCalculator';
 import { FileUpload } from './FileUpload';
 import { DateRangePicker } from './DateRangePicker';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+
 
 import { useTransactions } from '@/hooks/useTransactions';
 import { Button } from '@/components/ui/button';
@@ -358,47 +353,19 @@ export function Dashboard() {
             </div>
 
             {/* Accordion για Συναλλαγές και Ανάλυση Εμπόρων */}
-            <Accordion type="single" collapsible className="space-y-6">
-              <AccordionItem value="transactions" className="bg-card rounded-xl border border-border px-6 shadow-sm">
-                <AccordionTrigger className="hover:no-underline py-6">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 p-2 rounded-full">
-                      <TrendingUp className="w-5 h-5 text-primary" />
-                    </div>
-                    <span className="text-xl font-bold text-foreground">Συναλλαγές</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="pt-2 pb-6">
-                    <TransactionList
-                      transactions={filteredTransactions}
-                      onCategoryChange={updateTransactionCategory}
-                      categoryFilter={selectedCategory}
-                      onCategoryFilterChange={setSelectedCategory}
-                    />
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="merchant-analysis" className="bg-card rounded-xl border border-border px-6 shadow-sm">
-                <AccordionTrigger className="hover:no-underline py-6">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 p-2 rounded-full">
-                      <Store className="w-5 h-5 text-primary" />
-                    </div>
-                    <span className="text-xl font-bold text-foreground">Επαναλαμβανόμενα Έξοδα ανά Merchant</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="pt-2 pb-6">
-                    <MerchantAnalysis
-                      transactions={filteredTransactions}
-                      selectedCategory={selectedCategory}
-                    />
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            {/* Λίστα Συναλλαγών και Ανάλυση Merchant */}
+            <div className="space-y-6">
+              <TransactionList
+                transactions={filteredTransactions}
+                onCategoryChange={updateTransactionCategory}
+                categoryFilter={selectedCategory}
+                onCategoryFilterChange={setSelectedCategory}
+              />
+              <MerchantAnalysis
+                transactions={filteredTransactions}
+                selectedCategory={selectedCategory}
+              />
+            </div>
           </>
         )}
       </main>

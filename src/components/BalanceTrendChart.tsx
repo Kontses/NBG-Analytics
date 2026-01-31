@@ -34,6 +34,8 @@ export const BalanceTrendChart = memo(function BalanceTrendChart({ transactions,
   const [refAreaLeft, setRefAreaLeft] = useState<string | null>(null);
   const [refAreaRight, setRefAreaRight] = useState<string | null>(null);
 
+
+
   const { balanceData, monthStartIndices } = useMemo(() => {
     if (transactions.length === 0) return { balanceData: [], monthStartIndices: [] };
 
@@ -134,10 +136,12 @@ export const BalanceTrendChart = memo(function BalanceTrendChart({ transactions,
   ];
 
   return (
-    <Card className="col-span-full select-none">
-      <CardHeader className="flex flex-row items-center gap-2">
-        <TrendingUp className="w-5 h-5 text-primary" />
-        <CardTitle className="text-lg">Εξέλιξη Υπολοίπου (Σύρετε για επιλογή περιόδου)</CardTitle>
+    <Card className="col-span-full select-none shadow-md">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-primary" />
+          <CardTitle className="text-lg">Εξέλιξη Υπολοίπου</CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">

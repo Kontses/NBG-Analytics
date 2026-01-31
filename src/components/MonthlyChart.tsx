@@ -1,5 +1,7 @@
-import { memo, forwardRef } from 'react';
+import { memo, forwardRef, useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { BarChart3, ChevronDown, ChevronUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface MonthlyData {
@@ -56,17 +58,21 @@ const CustomTooltip = forwardRef<HTMLDivElement, any>(({ active, payload, label 
 });
 
 export const MonthlyChart = memo(function MonthlyChart({ data, onMonthClick }: MonthlyChartProps) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleClick = (data: any) => {
     if (data && data.activePayload && data.activePayload.length > 0 && onMonthClick) {
       onMonthClick(data.activePayload[0].payload.month);
     }
   };
 
+
+
   return (
-    <Card className="col-span-full lg:col-span-2">
-      <CardHeader>
-        <CardTitle className="text-lg">Μηνιαία Σύνοψη</CardTitle>
+    <Card className="col-span-full lg:col-span-2 shadow-md">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <div className="flex items-center gap-2">
+          <BarChart3 className="w-5 h-5 text-primary" />
+          <CardTitle className="text-lg">Μηνιαία Σύνοψη</CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">
@@ -110,6 +116,7 @@ export const MonthlyChart = memo(function MonthlyChart({ data, onMonthClick }: M
           </ResponsiveContainer>
         </div>
       </CardContent>
+
     </Card>
   );
 });

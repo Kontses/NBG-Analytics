@@ -1,5 +1,6 @@
 import { memo, forwardRef } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart as PieChartIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface CategoryData {
@@ -47,6 +48,8 @@ const CustomTooltip = forwardRef<HTMLDivElement, any>(({ active, payload }, ref)
 });
 
 export const CategoryChart = memo(function CategoryChart({ data, selectedCategory, onCategoryClick }: CategoryChartProps) {
+
+
   const total = data.reduce((sum, item) => sum + item.amount, 0);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -59,17 +62,20 @@ export const CategoryChart = memo(function CategoryChart({ data, selectedCategor
   };
 
   return (
-    <Card className="col-span-full lg:col-span-1">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg">Κατηγορίες Εξόδων</CardTitle>
-        {selectedCategory && (
-          <button
-            onClick={() => onCategoryClick?.(null)}
-            className="text-xs text-primary hover:underline"
-          >
-            Καθαρισμός
-          </button>
-        )}
+    <Card className="col-span-full lg:col-span-1 shadow-md">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <div className="flex items-center gap-2">
+          <PieChartIcon className="w-5 h-5 text-primary" />
+          <CardTitle className="text-lg">Κατηγορίες Εξόδων</CardTitle>
+          {selectedCategory && (
+            <button
+              onClick={() => onCategoryClick?.(null)}
+              className="text-xs text-primary hover:underline"
+            >
+              Καθαρισμός
+            </button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">
