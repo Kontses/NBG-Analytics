@@ -67,7 +67,7 @@ export const MonthlyChart = memo(function MonthlyChart({ data, onMonthClick, spe
 
           {isCurrentMonth && spendableAmount !== undefined && spendableAmount !== null && (
             <div className="mt-2 pt-2 border-t border-border border-dashed">
-              <p className={`text-sm font-bold ${spendableAmount >= 0 ? 'text-primary' : 'text-destructive'}`}>
+              <p className={`text-sm font-bold ${spendableAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 Διαθέσιμο: {formatCurrency(spendableAmount)}
               </p>
             </div>
