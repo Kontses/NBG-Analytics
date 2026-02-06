@@ -12,7 +12,8 @@ interface MonthlyData {
 
 interface MonthlyChartProps {
   data: MonthlyData[];
-  onMonthClick?: (month: string) => void;
+  onMonthClick: (month: string) => void;
+  spendableAmount?: number | null;
 }
 
 const formatMonth = (month: string) => {
@@ -30,40 +31,54 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CustomTooltip = forwardRef<HTMLDivElement, any>(({ active, payload, label }, ref) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
-    const netResult = data.income - data.expenses;
-
-    return (
-      <div ref={ref} className="bg-card border border-border rounded-lg shadow-lg p-3">
-        <p className="font-medium text-foreground mb-2">{formatMonth(label)}</p>
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        {payload.map((entry: any, index: number) => (
-          <p key={index} className="text-sm" style={{ color: entry.color }}>
-            {entry.name}: {formatCurrency(entry.value)}
-          </p>
-        ))}
-        <div className="mt-2 pt-2 border-t border-border">
-          <p className={`text-sm font-bold ${netResult >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-            Καθαρό: {netResult >= 0 ? '+' : ''}{formatCurrency(netResult)}
-          </p>
-        </div>
-        <p className="text-xs text-muted-foreground mt-2">Κάντε κλικ για φιλτράρισμα</p>
-      </div>
-    );
-  }
-  return null;
-});
-
-export const MonthlyChart = memo(function MonthlyChart({ data, onMonthClick }: MonthlyChartProps) {
+export const MonthlyChart = memo(function MonthlyChart({ data, onMonthClick, spendableAmount }: MonthlyChartProps) {
   const handleClick = (data: any) => {
     if (data && data.activePayload && data.activePayload.length > 0 && onMonthClick) {
       onMonthClick(data.activePayload[0].payload.month);
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      const netResult = data.income - data.expenses;
+
+      // Check for current month (label is YYYY-MM)
+      const now = new Date();
+      const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+      const isCurrentMonth = label === currentMonthKey;
+
+      return (
+        <div className="bg-card border border-border rounded-lg shadow-lg p-3">
+          <p className="font-medium text-foreground mb-2">{formatMonth(label)}</p>
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          {payload.map((entry: any, index: number) => (
+            <p key={index} className="text-sm" style={{ color: entry.color }}>
+              {entry.name}: {formatCurrency(entry.value)}
+            </p>
+          ))}
+          <div className="mt-2 pt-2 border-t border-border">
+            <p className={`text-sm font-bold ${netResult >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              Καθαρό: {netResult >= 0 ? '+' : ''}{formatCurrency(netResult)}
+            </p>
+          </div>
+
+          {isCurrentMonth && spendableAmount !== undefined && spendableAmount !== null && (
+            <div className="mt-2 pt-2 border-t border-border border-dashed">
+              <p className={`text-sm font-bold ${spendableAmount >= 0 ? 'text-primary' : 'text-destructive'}`}>
+                Διαθέσιμο: {formatCurrency(spendableAmount)}
+              </p>
+            </div>
+          )}
+
+          <p className="text-xs text-muted-foreground mt-2">Κάντε κλικ για φιλτράρισμα</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
 
   return (
@@ -98,7 +113,7 @@ export const MonthlyChart = memo(function MonthlyChart({ data, onMonthClick }: M
                 }}
                 className="text-xs fill-muted-foreground"
               />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<CustomTooltip spendableAmount={spendableAmount} />} />
               <Legend />
               <Bar
                 dataKey="income"

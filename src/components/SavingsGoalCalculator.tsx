@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 
 interface SavingsGoalCalculatorProps {
     currentBalance: number;
+    onMonthlyRequiredChange?: (amount: number) => void;
 }
 
 const STORAGE_KEY = 'banktrack_savings_wishlist';
@@ -32,7 +34,7 @@ interface SavingsState {
     isCollapsed?: boolean;
 }
 
-export function SavingsGoalCalculator({ currentBalance }: SavingsGoalCalculatorProps) {
+export function SavingsGoalCalculator({ currentBalance, onMonthlyRequiredChange }: SavingsGoalCalculatorProps) {
     const [state, setState] = useState<SavingsState>({
         items: [],
         useCurrentBalance: true,
@@ -138,6 +140,7 @@ export function SavingsGoalCalculator({ currentBalance }: SavingsGoalCalculatorP
     const currentTotalSavings = state.useCurrentBalance ? currentBalance : state.manualCurrentAmount;
 
     const calculations = useMemo(() => {
+        // --- Existing Savings Logic ---
         let totalTarget = 0;
         let totalMonthlyRequired = 0;
         const today = new Date();
@@ -179,6 +182,13 @@ export function SavingsGoalCalculator({ currentBalance }: SavingsGoalCalculatorP
 
         return { totalTarget, totalMonthlyRequired, progress };
     }, [state.items, currentTotalSavings]);
+
+    // Notify parent of monthly required amount changes
+    useEffect(() => {
+        if (onMonthlyRequiredChange) {
+            onMonthlyRequiredChange(calculations.totalMonthlyRequired);
+        }
+    }, [calculations.totalMonthlyRequired, onMonthlyRequiredChange]);
 
     const formatCurrency = (val: number) =>
         new Intl.NumberFormat('el-GR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val);

@@ -38,6 +38,7 @@ export function Dashboard() {
 
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
+  const [monthlySavingsGoal, setMonthlySavingsGoal] = useState<number>(0);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   // Debounced καταστάσεις (states) για βαριούς υπολογισμούς
@@ -164,6 +165,30 @@ export function Dashboard() {
   const hasDateFilter = startDate || endDate;
   const displayMonthlyStats = hasDateFilter ? filteredMonthlyStats : monthlyStats;
   const displayCategoryStats = hasDateFilter ? filteredCategoryStats : categoryStats;
+
+  // Calculate Remaining Spendable
+  const spendableAmount = useMemo(() => {
+    // 1. Find last salary
+    const salaryTransactions = transactions.filter(t =>
+      (t.customCategory === 'Μισθοδοσία' || t.transactionCategory === 'Μισθοδοσία' || t.description.toLowerCase().includes('μισθοδοσία')) && t.type === 'credit'
+    ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    const lastSalary = salaryTransactions.length > 0 ? salaryTransactions[0].amount : 0;
+
+    // 2. Calculate current month expenses
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const currentMonthExpenses = transactions
+      .filter(t =>
+        t.type === 'debit' &&
+        new Date(t.date) >= startOfMonth &&
+        t.customCategory !== 'Μισθοδοσία'
+      )
+      .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+    return lastSalary - monthlySavingsGoal - currentMonthExpenses;
+  }, [transactions, monthlySavingsGoal]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -329,11 +354,11 @@ export function Dashboard() {
 
             {/* Savings Goal Wishlist - Moved to top for better visibility */}
             <div className="mb-6">
-              <SavingsGoalCalculator currentBalance={totalBalance} />
+              <SavingsGoalCalculator currentBalance={totalBalance} onMonthlyRequiredChange={setMonthlySavingsGoal} />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <MonthlyChart data={displayMonthlyStats} onMonthClick={handleMonthClick} />
+              <MonthlyChart data={displayMonthlyStats} onMonthClick={handleMonthClick} spendableAmount={spendableAmount} />
               <CategoryChart
                 data={displayCategoryStats}
                 selectedCategory={selectedCategory}
