@@ -168,10 +168,10 @@ export function MerchantAnalysis({ transactions, selectedCategory }: MerchantAna
                                 <div className="border rounded-lg overflow-hidden flex-1 min-h-0">
                                     <div className="h-full overflow-y-auto divide-y">
                                         {merchantStats.map((merchant) => (
-                                            <div key={merchant.name} className="p-4 transition-colors hover:bg-slate-50/50">
+                                            <div key={merchant.name} className="p-4 transition-colors hover:bg-muted/50">
                                                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-3">
                                                     <div className="space-y-1">
-                                                        <h3 className="font-semibold text-sm text-slate-900 line-clamp-1">
+                                                        <h3 className="font-semibold text-sm text-foreground line-clamp-1">
                                                             {merchant.name}
                                                         </h3>
                                                         <Badge variant="secondary" className="font-normal text-xs px-2 py-0">
@@ -185,11 +185,11 @@ export function MerchantAnalysis({ transactions, selectedCategory }: MerchantAna
                                                 </div>
 
                                                 <div className="mb-3 flex items-center gap-2">
-                                                    <div className="text-xs text-slate-500">
-                                                        Μ.Ο.: <span className="font-medium text-slate-700">{formatCurrency(merchant.averageAmount)}</span>
+                                                    <div className="text-xs text-muted-foreground">
+                                                        Μ.Ο.: <span className="font-medium text-foreground">{formatCurrency(merchant.averageAmount)}</span>
                                                     </div>
                                                     {merchant.count >= 5 && (
-                                                        <Badge variant="outline" className="text-[10px] text-red-600 border-red-200 bg-red-50 h-5 px-1.5 gap-0.5">
+                                                        <Badge variant="outline" className="text-[10px] text-red-600 border-red-200 bg-red-50 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900 h-5 px-1.5 gap-0.5">
                                                             <TrendingUp className="w-3 h-3" />
                                                             Συχνός
                                                         </Badge>

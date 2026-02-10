@@ -13,6 +13,7 @@ import { DateRangePicker } from './DateRangePicker';
 
 import { useTransactions } from '@/hooks/useTransactions';
 import { Button } from '@/components/ui/button';
+import { ModeToggle } from '@/components/mode-toggle';
 import { DEMO_TRANSACTIONS } from '@/data/demoTransactions';
 
 const formatCurrency = (value: number) => {
@@ -203,28 +204,31 @@ export function Dashboard() {
               <p className="text-xs text-muted-foreground">Ανάλυση Τραπεζικών Κινήσεων</p>
             </div>
           </div>
-          {hasData && (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={refreshCategories}
-                className="text-primary hover:text-primary"
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Ανανέωση
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearAllTransactions}
-                className="text-destructive hover:text-destructive"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Καθαρισμός
-              </Button>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            {hasData && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={refreshCategories}
+                  className="text-primary hover:text-primary"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:inline">Ανανέωση</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearAllTransactions}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:inline">Καθαρισμός</span>
+                </Button>
+              </>
+            )}
+            <ModeToggle />
+          </div>
         </div>
       </header>
 
