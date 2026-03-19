@@ -84,8 +84,15 @@ export function parseExcelFile(file: File): Promise<Transaction[]> {
                             transaction.date = parseGreekDate(value);
                         } else if (englishKey === 'type') {
                             transaction.type = value === 'Χ' ? 'debit' : 'credit';
-                        } else if (englishKey === 'amount' || englishKey === 'orderAmount' || englishKey === 'accountBalance') {
+                        } else if (englishKey === 'amount' || englishKey === 'orderAmount') {
                             transaction[englishKey] = parseFloat(String(value).replace(',', '.')) || 0;
+                        } else if (englishKey === 'accountBalance') {
+                            if (value === undefined || value === null || value === '') {
+                                transaction.accountBalance = 0;
+                                (transaction as any).hasNoBalance = true; // Σημαία για να το υπολογίσουμε δυναμικά
+                            } else {
+                                transaction.accountBalance = parseFloat(String(value).replace(',', '.')) || 0;
+                            }
                         } else {
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             (transaction as any)[englishKey] = value || '';

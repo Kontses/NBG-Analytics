@@ -72,6 +72,21 @@ export function useTransactions() {
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
         );
 
+        // Υπολογισμός Λογιστικού Υπολοίπου (Running Balance)
+        for (let i = merged.length - 1; i >= 0; i--) {
+            if (merged[i].hasNoBalance) {
+                if (i < merged.length - 1) {
+                    const olderTxn = merged[i + 1];
+                    const change = merged[i].type === 'credit' ? Math.abs(merged[i].amount) : -Math.abs(merged[i].amount);
+                    merged[i].accountBalance = olderTxn.accountBalance + change;
+                } else {
+                    const change = merged[i].type === 'credit' ? Math.abs(merged[i].amount) : -Math.abs(merged[i].amount);
+                    merged[i].accountBalance = change;
+                }
+                merged[i].hasNoBalance = false;
+            }
+        }
+
         localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
         return merged;
       });

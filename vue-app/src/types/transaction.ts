@@ -29,6 +29,7 @@ export interface Transaction {
     cardTransactionTime: string;
     debitCard: string;
     customCategory?: string;
+    hasNoBalance?: boolean;
 }
 
 export interface CategoryMapping {
