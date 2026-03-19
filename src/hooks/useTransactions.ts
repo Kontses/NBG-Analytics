@@ -74,7 +74,11 @@ export function useTransactions() {
 
         // Υπολογισμός Λογιστικού Υπολοίπου (Running Balance)
         for (let i = merged.length - 1; i >= 0; i--) {
-            if (merged[i].hasNoBalance) {
+            // Συμπερίληψη περιπτώσεων που το αρχείο είχε φορτωθεί παλιότερα με 0 (χωρίς hasNoBalance),
+            // και ξέρουμε ότι είναι από το νέο αρχείο επειδή δεν περιέχει referenceNumber.
+            const isFromNewFormat = !merged[i].referenceNumber;
+            if (merged[i].hasNoBalance || (merged[i].accountBalance === 0 && isFromNewFormat)) {
+                merged[i] = { ...merged[i] }; // Immutability 
                 if (i < merged.length - 1) {
                     const olderTxn = merged[i + 1];
                     const change = merged[i].type === 'credit' ? Math.abs(merged[i].amount) : -Math.abs(merged[i].amount);
