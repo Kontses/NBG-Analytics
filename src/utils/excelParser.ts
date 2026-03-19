@@ -30,13 +30,24 @@ const COLUMN_MAPPING: Record<string, keyof Omit<Transaction, 'id' | 'customCateg
   'Ημερομηνία Συναλλαγής με χρεωστική κάρτα': 'cardTransactionDate',
   'Ώρα Συναλλαγής με χρεωστική κάρτα': 'cardTransactionTime',
   'Χρεωστική Κάρτα': 'debitCard',
+  
+  // Νέο Format (Η εφαρμογή υποστηρίζει και τα δύο ταυτόχρονα)
+  'Α/Α': 'transactionNumber',
+  'Ημερομηνία/Ώρα Συναλλαγής': 'date',
+  'Ποσό': 'amount',
+  'Χ/Π': 'type',
+  'Περιγραφή Κίνησης': 'description',
+  'Στοιχεία Εμπόρου': 'counterpartyName',
 };
 
 function parseGreekDate(dateStr: string): Date {
   if (!dateStr) return new Date();
 
+  // Αφαίρεση τυχόν ώρας από το νέο format (π.χ. "17/3/2026 10:47 πμ" -> "17/3/2026")
+  const dateOnly = dateStr.split(' ')[0];
+
   // Δοκιμή μορφής DD/MM/YYYY
-  const parts = dateStr.split('/');
+  const parts = dateOnly.split('/');
   if (parts.length === 3) {
     const day = parseInt(parts[0], 10);
     const month = parseInt(parts[1], 10) - 1;
@@ -45,7 +56,7 @@ function parseGreekDate(dateStr: string): Date {
     return new Date(year, month, day);
   }
 
-  return new Date(dateStr);
+  return new Date(dateOnly);
 }
 
 export function parseExcelFile(file: File): Promise<Transaction[]> {
