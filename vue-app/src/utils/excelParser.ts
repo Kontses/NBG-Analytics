@@ -92,6 +92,14 @@ export function parseExcelFile(file: File): Promise<Transaction[]> {
                         }
                     });
 
+                    // Καθαρισμός του counterpartyName αν είναι απλά ένα Merchant ID (Νέο Format) ή κενό
+                    let cName = String(transaction.counterpartyName || '').trim();
+                    if (!cName || /^\d+$/.test(cName)) {
+                        let desc = String(transaction.description || '').trim();
+                        cName = desc.replace(/^(?:E-COMMERCE\s+)?ΑΓΟΡΑ\s*(?:\(ΕΞΟΥΣΙΟΔΟΤΗΣΗ\)\s*)?-\s*/i, '').trim();
+                    }
+                    transaction.counterpartyName = cName;
+
                     return transaction as Transaction;
                 });
 

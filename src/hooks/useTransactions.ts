@@ -58,8 +58,14 @@ export function useTransactions() {
       });
 
       setTransactions(currentTransactions => {
-        const existingIds = new Set(currentTransactions.map(t => t.referenceNumber));
-        const uniqueNew = categorizedTxns.filter(t => !existingIds.has(t.referenceNumber));
+        const getUniqueKey = (t: Transaction) => {
+          if (t.referenceNumber && t.referenceNumber !== '') return t.referenceNumber;
+          if (t.transactionNumber && t.transactionNumber !== '') return t.transactionNumber;
+          return `${new Date(t.date).getTime()}-${t.amount}-${t.description}`;
+        };
+        
+        const existingIds = new Set(currentTransactions.map(getUniqueKey));
+        const uniqueNew = categorizedTxns.filter(t => !existingIds.has(getUniqueKey(t as Transaction)));
         newCount = uniqueNew.length;
 
         const merged = [...currentTransactions, ...uniqueNew].sort(
