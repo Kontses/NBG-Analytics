@@ -42,6 +42,14 @@ export function Dashboard() {
   const [monthlySavingsGoal, setMonthlySavingsGoal] = useState<number>(0);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+  const [showSpendableAmount, setShowSpendableAmount] = useState<boolean>(() => {
+    return localStorage.getItem('banktrack_show_spendable') !== 'false';
+  });
+
+  const handleToggleShowSpendable = (checked: boolean) => {
+    setShowSpendableAmount(checked);
+    localStorage.setItem('banktrack_show_spendable', checked.toString());
+  };
   // Debounced καταστάσεις (states) για βαριούς υπολογισμούς
   const [debouncedStartDate, setDebouncedStartDate] = useState<Date | undefined>();
   const [debouncedEndDate, setDebouncedEndDate] = useState<Date | undefined>();
@@ -358,11 +366,16 @@ export function Dashboard() {
 
             {/* Savings Goal Wishlist - Moved to top for better visibility */}
             <div className="mb-6">
-              <SavingsGoalCalculator currentBalance={totalBalance} onMonthlyRequiredChange={setMonthlySavingsGoal} />
+              <SavingsGoalCalculator 
+                currentBalance={totalBalance} 
+                onMonthlyRequiredChange={setMonthlySavingsGoal} 
+                showSpendableAmount={showSpendableAmount}
+                onToggleShowSpendableAmount={handleToggleShowSpendable}
+              />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <MonthlyChart data={displayMonthlyStats} onMonthClick={handleMonthClick} spendableAmount={spendableAmount} />
+              <MonthlyChart data={displayMonthlyStats} onMonthClick={handleMonthClick} spendableAmount={showSpendableAmount ? spendableAmount : null} />
               <CategoryChart
                 data={displayCategoryStats}
                 selectedCategory={selectedCategory}

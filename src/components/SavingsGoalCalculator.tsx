@@ -15,6 +15,8 @@ import { Separator } from "@/components/ui/separator";
 interface SavingsGoalCalculatorProps {
     currentBalance: number;
     onMonthlyRequiredChange?: (amount: number) => void;
+    showSpendableAmount?: boolean;
+    onToggleShowSpendableAmount?: (val: boolean) => void;
 }
 
 const STORAGE_KEY = 'banktrack_savings_wishlist';
@@ -34,7 +36,7 @@ interface SavingsState {
     isCollapsed?: boolean;
 }
 
-export function SavingsGoalCalculator({ currentBalance, onMonthlyRequiredChange }: SavingsGoalCalculatorProps) {
+export function SavingsGoalCalculator({ currentBalance, onMonthlyRequiredChange, showSpendableAmount, onToggleShowSpendableAmount }: SavingsGoalCalculatorProps) {
     const [state, setState] = useState<SavingsState>({
         items: [],
         useCurrentBalance: true,
@@ -373,6 +375,18 @@ export function SavingsGoalCalculator({ currentBalance, onMonthlyRequiredChange 
                                         className="text-lg font-bold bg-background/50 border-transparent shadow-none"
                                     />
                                 </div>
+
+                                {onToggleShowSpendableAmount && (
+                                    <div className="flex items-center justify-between mt-2">
+                                        <Label htmlFor="show-spendable" className="text-xs text-muted-foreground mr-2 cursor-pointer">Εμφάνιση «Διαθέσιμου» στο Γράφημα</Label>
+                                        <Switch
+                                            id="show-spendable"
+                                            checked={showSpendableAmount ?? true}
+                                            onCheckedChange={onToggleShowSpendableAmount}
+                                            className="scale-75 origin-right"
+                                        />
+                                    </div>
+                                )}
 
                                 <Separator className="bg-border/50" />
 
