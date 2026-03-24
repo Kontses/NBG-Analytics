@@ -1,43 +1,35 @@
 import * as XLSX from 'xlsx';
 import { Transaction } from '../types/transaction';
 
-const COLUMN_MAPPING: Record<string, keyof Omit<Transaction, 'id' | 'customCategory'>> = {
-    'Α/Α Συναλλαγής': 'transactionNumber',
-    'Ημερομηνία': 'date',
-    'Ώρα': 'time',
-    'Valeur': 'valeur',
-    'Κατάστημα': 'branch',
-    'Κατηγορία συναλλαγής': 'transactionCategory',
-    'Είδος εργασίας': 'workType',
-    'Ποσό συναλλαγής': 'amount',
-    'Ποσό εντολής': 'orderAmount',
-    'Νόμισμα': 'currency',
-    'Χρέωση / Πίστωση': 'type',
-    'Ισοτιμία': 'exchangeRate',
-    'Περιγραφή': 'description',
-    'Λογιστικό Υπόλοιπο': 'accountBalance',
-    'Ονοματεπώνυμο συμβαλλόμενου': 'accountHolderName',
-    'Ονοματεπώνυμο αντισυμβαλλόμενου': 'counterpartyName',
-    'Λογαριασμός αντισυμβαλλόμενου': 'counterpartyAccount',
-    'Τράπεζα αντισυμβαλλόμενου': 'counterpartyBank',
-    'Επιπρόσθετες πληροφορίες': 'additionalInfo',
-    'Αριθμός αναφοράς': 'referenceNumber',
-    'Κανάλι': 'channel',
-    'Ονοματεπώνυμο αντιπροσώπου': 'agentName',
-    'Είδος προμήθειας': 'commissionType',
-    'Κωδικός εμπόρου/οργανισμού': 'merchantCode',
-    'Σκοπός συναλλαγής': 'transactionPurpose',
-    'Ημερομηνία Συναλλαγής με χρεωστική κάρτα': 'cardTransactionDate',
-    'Ώρα Συναλλαγής με χρεωστική κάρτα': 'cardTransactionTime',
-    'Χρεωστική Κάρτα': 'debitCard',
-
-    // Νέο Format (Η εφαρμογή υποστηρίζει και τα δύο ταυτόχρονα)
-    'Α/Α': 'transactionNumber',
-    'Ημερομηνία/Ώρα Συναλλαγής': 'date',
-    'Ποσό': 'amount',
-    'Χ/Π': 'type',
-    'Περιγραφή Κίνησης': 'description',
-    'Στοιχεία Εμπόρου': 'counterpartyName',
+const ENGLISH_TO_GREEK: Record<keyof Omit<Transaction, 'id' | 'customCategory' | 'hasNoBalance'>, string[]> = {
+    transactionNumber: ['Α/Α Συναλλαγής', 'Α/Α'],
+    date: ['Ημερομηνία/Ώρα Συναλλαγής', 'Ημερομηνία'],
+    time: ['Ώρα'],
+    valeur: ['Valeur'],
+    branch: ['Κατάστημα'],
+    transactionCategory: ['Κατηγορία συναλλαγής'],
+    workType: ['Είδος εργασίας'],
+    amount: ['Ποσό συναλλαγής', 'Ποσό'],
+    orderAmount: ['Ποσό εντολής'],
+    currency: ['Νόμισμα', 'Νόμισμα Λογαριασμού'],
+    type: ['Χρέωση / Πίστωση', 'Χ/Π'],
+    exchangeRate: ['Ισοτιμία', 'Ισοτιμία Συναλλαγής'],
+    description: ['Περιγραφή', 'Περιγραφή Κίνησης'],
+    accountBalance: ['Λογιστικό Υπόλοιπο'],
+    accountHolderName: ['Ονοματεπώνυμο συμβαλλόμενου'],
+    counterpartyName: ['Ονοματεπώνυμο αντισυμβαλλόμενου', 'Στοιχεία Εμπόρου'],
+    counterpartyAccount: ['Λογαριασμός αντισυμβαλλόμενου', 'Λογαριασμός'],
+    counterpartyBank: ['Τράπεζα αντισυμβαλλόμενου'],
+    additionalInfo: ['Επιπρόσθετες πληροφορίες'],
+    referenceNumber: ['Αριθμός αναφοράς'],
+    channel: ['Κανάλι', 'Τερματικό'],
+    agentName: ['Ονοματεπώνυμο αντιπροσώπου'],
+    commissionType: ['Είδος προμήθειας'],
+    merchantCode: ['Κωδικός εμπόρου/οργανισμού'],
+    transactionPurpose: ['Σκοπός συναλλαγής'],
+    cardTransactionDate: ['Ημερομηνία Συναλλαγής με χρεωστική κάρτα'],
+    cardTransactionTime: ['Ώρα Συναλλαγής με χρεωστική κάρτα'],
+    debitCard: ['Χρεωστική Κάρτα']
 };
 
 function parseGreekDate(dateStr: string): Date {
@@ -77,15 +69,24 @@ export function parseExcelFile(file: File): Promise<Transaction[]> {
                         id: `txn-${Date.now()}-${index}`,
                     };
 
-                    Object.entries(COLUMN_MAPPING).forEach(([greekKey, englishKey]) => {
-                        const value = row[greekKey];
+                    const getValue = (aliases: string[]) => {
+                        for (const alias of aliases) {
+                            if (row[alias] !== undefined) {
+                                return row[alias];
+                            }
+                        }
+                        return undefined;
+                    };
+
+                    Object.entries(ENGLISH_TO_GREEK).forEach(([englishKey, aliases]) => {
+                        const value = getValue(aliases);
 
                         if (englishKey === 'date') {
-                            transaction.date = parseGreekDate(value);
+                            transaction.date = value ? parseGreekDate(String(value)) : new Date();
                         } else if (englishKey === 'type') {
                             transaction.type = value === 'Χ' ? 'debit' : 'credit';
                         } else if (englishKey === 'amount' || englishKey === 'orderAmount') {
-                            transaction[englishKey] = parseFloat(String(value).replace(',', '.')) || 0;
+                            (transaction as any)[englishKey] = value ? parseFloat(String(value).replace(',', '.')) || 0 : 0;
                         } else if (englishKey === 'accountBalance') {
                             if (value === undefined || value === null || value === '') {
                                 transaction.accountBalance = 0;
